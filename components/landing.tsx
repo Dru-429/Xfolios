@@ -4,9 +4,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import {
   ArrowUpRight,
   ChevronLeft,
-  ChevronRight,
-  Moon,
-  Sun
+  ChevronRight
 } from 'lucide-react'
 import Image from 'next/image'
 import {
@@ -21,7 +19,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import portfolios from '@/data/portfolios.json'
-import Link from 'next/link'
 import { Navbar } from './ui/Navbar'
 import Hero from './ui/Hero'
 
@@ -338,11 +335,12 @@ function PortfolioPreview ({
       return
     }
 
+    const requestUrl = previewUrl
     const controller = new AbortController()
 
     async function loadPreview () {
       try {
-        const response = await fetch(previewUrl, { signal: controller.signal })
+        const response = await fetch(requestUrl, { signal: controller.signal })
 
         if (!response.ok) {
           throw new Error(`Preview request failed: ${response.status}`)

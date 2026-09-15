@@ -4,6 +4,7 @@ import { Moon, Sun, User, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/hooks/useTheme";
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 function NavPill({
   to,
@@ -11,7 +12,7 @@ function NavPill({
   primary = false,
 }: {
   to: string;
-  label: string;
+  label: ReactNode;
   primary?: boolean;
 }) {
   return (
@@ -90,8 +91,8 @@ function ThemeToggle({
 function ProfileLink() {
   return (
     <Link
-      href="/profile"
-      aria-label="Profile"
+      href="/signin"
+      aria-label="Sign in"
       className={cn(
         "inline-flex h-9 w-9 shrink-0 items-center justify-center",
         "rounded-md border border-border bg-card",

@@ -3,8 +3,14 @@ import { prisma } from './db'
 async function main() {
   console.log('Performing CRUD operations...')
 
+  const timestamp = Date.now()
+
   const newUser = await prisma.user.create({
-    data: { name: 'Alice', email: `alice-${Date.now()}@example.com` },
+    data: {
+      xId: `example-${timestamp}`,
+      xUsername: 'Alice',
+      xHandle: `alice-${timestamp}`,
+    },
   })
   console.log('CREATE:', newUser)
 
@@ -13,7 +19,7 @@ async function main() {
 
   const updatedUser = await prisma.user.update({
     where: { id: newUser.id },
-    data: { name: 'Alice Smith' },
+    data: { xUsername: 'Alice Smith' },
   })
   console.log('UPDATE:', updatedUser)
 
