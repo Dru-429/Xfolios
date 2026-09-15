@@ -35,7 +35,7 @@ type ProfilePageProps = {
 
 type ProfileTab = 'folios' | 'saved'
 
-function toPortfolioTile(
+function toPortfolioTile (
   page: ProfilePageItem,
   profile: ProfilePageUser,
   index: number
@@ -49,7 +49,7 @@ function toPortfolioTile(
   }
 }
 
-function PageGrid({
+function PageGrid ({
   pages,
   profile
 }: {
@@ -77,7 +77,7 @@ function PageGrid({
   )
 }
 
-export default function ProfilePage({
+export default function ProfilePage ({
   profile,
   pages,
   bookmarks,
@@ -164,11 +164,17 @@ export default function ProfilePage({
 
         <div className='grid grid-cols-2 border-y border-border py-4 text-center text-sm sm:hidden'>
           <p>
-            <strong className='block font-semibold'>{profile.totalPages}</strong>
-            <span className='text-muted-foreground'>folio{profile.totalPages === 1 ? '' : 's'}</span>
+            <strong className='block font-semibold'>
+              {profile.totalPages}
+            </strong>
+            <span className='text-muted-foreground'>
+              folio{profile.totalPages === 1 ? '' : 's'}
+            </span>
           </p>
           <p>
-            <strong className='block font-semibold'>{profile.totalBookmarks}</strong>
+            <strong className='block font-semibold'>
+              {profile.totalBookmarks}
+            </strong>
             <span className='text-muted-foreground'>saved</span>
           </p>
         </div>
@@ -184,7 +190,11 @@ export default function ProfilePage({
             role='tab'
             aria-selected={activeTab === 'folios'}
             onClick={() => setActiveTab('folios')}
-            className={`-mt-px h-12 rounded-none border-t px-1 text-xs font-medium uppercase hover:bg-transparent ${activeTab === 'folios' ? 'border-foreground text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+            className={`-mt-px h-12 rounded-none border-t px-1 text-xs font-medium uppercase hover:bg-transparent ${
+              activeTab === 'folios'
+                ? 'border-foreground text-foreground'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
+            }`}
           >
             <Grid3X3 className='h-4 w-4' aria-hidden='true' /> Folios
           </Button>
@@ -195,7 +205,11 @@ export default function ProfilePage({
               role='tab'
               aria-selected={activeTab === 'saved'}
               onClick={() => setActiveTab('saved')}
-              className={`-mt-px h-12 rounded-none border-t px-1 text-xs font-medium uppercase hover:bg-transparent ${activeTab === 'saved' ? 'border-foreground text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+              className={`-mt-px h-12 rounded-none border-t px-1 text-xs font-medium uppercase hover:bg-transparent ${
+                activeTab === 'saved'
+                  ? 'border-foreground text-foreground'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
             >
               <Bookmark className='h-4 w-4' aria-hidden='true' /> Saved
             </Button>
