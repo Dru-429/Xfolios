@@ -87,7 +87,7 @@ export default function ProfilePage ({
   const initials = profile.name.trim().slice(0, 2).toUpperCase()
 
   return (
-    <div className='min-h-screen bg-background text-foreground'>
+    <div className='relative min-h-screen bg-background text-foreground'>
       <Navbar
         user={
           isOwner
@@ -263,8 +263,10 @@ export default function ProfilePage ({
           )}
         </AnimatePresence>
       </main>
-
-      <Footer />
+      
+      <div className="fixed bottom-0 w-full">
+        <Footer />
+      </div>
     </div>
   )
 }
