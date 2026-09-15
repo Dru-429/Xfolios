@@ -5,10 +5,12 @@ import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
+import Link from 'next/link'
 
 
 type Portfolio = {
   'sl.no.': number
+  pageId?: string
   Username: string
   'X url': string
   'X image url': string
@@ -38,13 +40,67 @@ export default function PortfolioTile ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(index * 0.025, 0.3), duration: 0.35 }}
     >
-      <a
-        href={portfolioUrl}
-        target='_blank'
-        rel='noreferrer'
-        className='block'
-        aria-label={`Open ${name}'s portfolio`}
-      >
+      {portfolio.pageId ? (
+        <Link
+          href={`/page/${portfolio.pageId}`}
+          className='block'
+          aria-label={`Open ${name}'s portfolio`}
+        >
+          <PortfolioTileContent
+            portfolio={portfolio}
+            name={name}
+            handle={handle}
+            initials={initials}
+            portfolioUrl={portfolioUrl}
+            hasPreviewError={hasPreviewError}
+            setHasPreviewError={setHasPreviewError}
+          />
+        </Link>
+      ) : (
+        <a
+          href={portfolioUrl}
+          target='_blank'
+          rel='noreferrer'
+          className='block'
+          aria-label={`Open ${name}'s portfolio`}
+        >
+          <PortfolioTileContent
+            portfolio={portfolio}
+            name={name}
+            handle={handle}
+            initials={initials}
+            portfolioUrl={portfolioUrl}
+            hasPreviewError={hasPreviewError}
+            setHasPreviewError={setHasPreviewError}
+          />
+        </a>
+      )}
+      <div className='truncate border-t border-border/70 px-3 pb-3 font-mono text-[10px] text-muted-foreground sm:px-4'>
+        {domain}
+      </div>
+    </motion.article>
+  )
+}
+
+function PortfolioTileContent ({
+  portfolio,
+  name,
+  handle,
+  initials,
+  portfolioUrl,
+  hasPreviewError,
+  setHasPreviewError
+}: {
+  portfolio: Portfolio
+  name: string
+  handle?: string
+  initials: string
+  portfolioUrl: string
+  hasPreviewError: boolean
+  setHasPreviewError: Dispatch<SetStateAction<boolean>>
+}) {
+  return (
+    <>
         <div
           className={`relative aspect-[1.48] overflow-hidden border-b border-border`}
         >
@@ -88,11 +144,7 @@ export default function PortfolioTile ({
             aria-hidden='true'
           />
         </div>
-      </a>
-      <div className='truncate border-t border-border/70 px-3 pb-3 font-mono text-[10px] text-muted-foreground sm:px-4'>
-        {domain}
-      </div>
-    </motion.article>
+    </>
   )
 }
 

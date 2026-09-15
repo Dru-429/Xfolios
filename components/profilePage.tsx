@@ -42,6 +42,7 @@ function toPortfolioTile (
 ) {
   return {
     'sl.no.': index + 1,
+    pageId: page.id,
     Username: `${page.title} - @${profile.handle}`,
     'X url': `https://x.com/${profile.handle}`,
     'X image url': profile.avatar ?? '',
