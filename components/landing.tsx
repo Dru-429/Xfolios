@@ -22,6 +22,12 @@ import portfolios from '@/data/portfolios.json'
 import { Navbar } from './ui/Navbar'
 import Hero from './ui/Hero'
 
+type LandingUser = {
+  name?: string | null
+  image?: string | null
+  xHandle?: string | null
+}
+
 type Portfolio = {
   'sl.no.': number
   Username: string
@@ -117,7 +123,7 @@ function subscribeToThemeChange (onStoreChange: () => void) {
   }
 }
 
-export default function Landing () {
+export default function Landing ({ user }: { user: LandingUser | null }) {
   const [page, setPage] = useState(1)
   const isDark = useSyncExternalStore(
     subscribeToThemeChange,
@@ -143,7 +149,7 @@ export default function Landing () {
   return (
     <div className='min-h-screen bg-background text-foreground'>
       <header className='border-b border-border'>
-        <Navbar />
+        <Navbar user={user} />
       </header>
 
       <main

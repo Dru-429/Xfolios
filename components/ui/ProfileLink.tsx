@@ -1,7 +1,8 @@
-"use client"
+'use client'
 
-import Link from "next/link"
-import Image from "next/image"
+import { cn } from "@/lib/utils";
+import Link from 'next/link'
+import Image from 'next/image'
 
 type ProfileLinkProps = {
   user?: {
@@ -11,20 +12,26 @@ type ProfileLinkProps = {
   } | null
 }
 
-export default function ProfileLink({ user }: ProfileLinkProps) {
-  const href = user?.xHandle
-    ? `/profile/${user.xHandle}`
-    : "/signin"
+export default function ProfileLink ({ user }: ProfileLinkProps) {
+  const href = user?.xHandle ? `/profile/${user.xHandle}` : '/signin'
 
   return (
-    <Link href={href}>
+    <Link
+      href={href}
+      className={cn(
+        'inline-flex h-9 w-9 shrink-0 items-center justify-center',
+        'rounded-md border border-border bg-card ',
+        'text-foreground transition-all duration-200',
+        'hover:border-foreground/40'
+      )}
+    >
       {user?.image ? (
         <Image
           src={user.image}
-          alt={user.name ?? "Profile"}
+          alt={user.name ?? 'Profile'}
           width={32}
           height={32}
-          className="rounded-full"
+          className='rounded-sm'
         />
       ) : (
         <span>Sign in</span>

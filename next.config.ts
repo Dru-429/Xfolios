@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'iad.microlink.io'
+      },
+      {
+        protocol: 'https',
+        hostname: 'pbs.twimg.com'
       }
     ]
   }

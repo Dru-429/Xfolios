@@ -1,9 +1,12 @@
 import Landing from "@/components/landing";
+import { auth } from "@/auth"
 
-const page = () => {
+const page = async () => {
+  const session = await auth()
+
   return (
     <div>
-      <Landing />
+      <Landing user={session?.user ?? null} />
     </div>
   )
 }

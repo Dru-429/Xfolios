@@ -7,6 +7,12 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 import ProfileLink from './ProfileLink';
 
+type NavbarUser = {
+  name?: string | null
+  image?: string | null
+  xHandle?: string | null
+}
+
 function NavPill ({
   to,
   label,
@@ -89,7 +95,7 @@ function ThemeToggle ({
   )
 }
 
-export function Navbar () {
+export function Navbar ({ user }: { user: NavbarUser | null }) {
   const { isDark, toggleTheme, mounted } = useTheme()
 
   return (
@@ -129,7 +135,7 @@ export function Navbar () {
             <div className='h-9 w-18 rounded-md border border-border bg-card' />
           )}
 
-          <ProfileLink/>
+          <ProfileLink user={user} />
         </nav>
       </div>
     </header>
