@@ -7,7 +7,7 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 function createPrismaClient() {
-  const connectionString = "postgresql://neondb_owner:npg_pKziN81AxPjf@ep-rapid-rain-b353bsyz-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+  const connectionString = ""
 
   if (!connectionString) {
     throw new Error("DATABASE_URL is not configured")
