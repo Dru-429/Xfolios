@@ -115,11 +115,14 @@ export default function ProfilePage ({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
         >
-          <Avatar className='h-[88px] w-[88px] rounded-full border border-border p-1 sm:h-40 sm:w-40'>
+          <Avatar className='h-[88px] w-[88px] rounded-2xl border border-border p-1 sm:h-40 sm:w-40'>
             <AvatarImage
-              src={profile.avatar?.replace(/_normal(?=\.[a-zA-Z]+$)/, "") ?? undefined}
+              src={
+                profile.avatar?.replace(/_normal(?=\.[a-zA-Z]+$)/, '') ??
+                undefined
+              }
               alt={`${profile.name} on X`}
-              className='rounded-full object-cover'
+              className='rounded-xl object-cover'
             />
             <AvatarFallback className='rounded-full bg-accent font-display text-2xl text-accent-foreground sm:text-4xl'>
               {initials}
@@ -127,7 +130,7 @@ export default function ProfilePage ({
           </Avatar>
 
           <div className='min-w-0 self-center'>
-            <div className='flex flex-col items-start gap-4 sm:flex-row sm:items-center'>
+            <div className='flex items-start gap-4 flex-col'>
               <div className='min-w-0'>
                 <h1 className='truncate font-display text-2xl font-medium sm:text-3xl'>
                   {profile.name}
@@ -136,29 +139,49 @@ export default function ProfilePage ({
                   @{profile.handle}
                 </p>
               </div>
-              <Button asChild size='sm' className='rounded-md'>
-                <a
-                  href={`https://x.com/${profile.handle}`}
-                  target='_blank'
-                  rel='noreferrer'
+              <div className=' hidden items-center gap-8 text-sm sm:flex'>
+                <p>
+                  <strong className='font-semibold'>{profile.totalPages}</strong>{' '}
+                  folio{profile.totalPages === 1 ? '' : 's'}
+                </p>
+                <p>
+                  <strong className='font-semibold'>
+                    {profile.totalBookmarks}
+                  </strong>{' '}
+                  saved
+                </p>
+              </div>
+              <div className='flex gap-4 w-full '>
+                <Button
+                  asChild
+                  size='sm'
+                  className='rounded-md w-1/4 border-primary'
+                  variant={'outline'}
                 >
-                  View on X
-                </a>
-              </Button>
+                  <a
+                    href={`https://x.com/${profile.handle}`}
+                    target='_blank'
+                    rel='noreferrer'
+                  >
+                    View on X
+                  </a>
+                </Button>
+                {isOwner &&
+                  (
+                    <Button asChild size='sm' className='rounded-md w-1/4 bg-primary/80'>
+                      <a
+                        href={`/add`}
+                        target='_blank'
+                        rel='noreferrer'
+                      >
+                        Add Page 
+                      </a>
+                    </Button>
+                  )
+                }
+              </div>
             </div>
 
-            <div className='mt-6 hidden items-center gap-8 text-sm sm:flex'>
-              <p>
-                <strong className='font-semibold'>{profile.totalPages}</strong>{' '}
-                folio{profile.totalPages === 1 ? '' : 's'}
-              </p>
-              <p>
-                <strong className='font-semibold'>
-                  {profile.totalBookmarks}
-                </strong>{' '}
-                saved
-              </p>
-            </div>
           </div>
         </motion.section>
 
@@ -180,7 +203,7 @@ export default function ProfilePage ({
         </div>
 
         <div
-          className='mt-8 flex justify-center gap-10 border-t border-border sm:mt-2'
+          className='flex justify-center gap-10 sm:border-t border-border sm:mt-2'
           role='tablist'
           aria-label='Profile content'
         >
@@ -192,7 +215,7 @@ export default function ProfilePage ({
             onClick={() => setActiveTab('folios')}
             className={`-mt-px h-12 rounded-none border-t px-1 text-xs font-medium uppercase hover:bg-transparent ${
               activeTab === 'folios'
-                ? 'border-foreground text-foreground'
+                ? 'border-b-foreground text-foreground'
                 : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
@@ -207,7 +230,7 @@ export default function ProfilePage ({
               onClick={() => setActiveTab('saved')}
               className={`-mt-px h-12 rounded-none border-t px-1 text-xs font-medium uppercase hover:bg-transparent ${
                 activeTab === 'saved'
-                  ? 'border-foreground text-foreground'
+                  ? 'border-b-foreground text-foreground'
                   : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
             >
