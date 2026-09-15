@@ -117,7 +117,7 @@ export default function ProfilePage ({
         >
           <Avatar className='h-[88px] w-[88px] rounded-full border border-border p-1 sm:h-40 sm:w-40'>
             <AvatarImage
-              src={profile.avatar ?? undefined}
+              src={profile.avatar?.replace(/_normal(?=\.[a-zA-Z]+$)/, "") ?? undefined}
               alt={`${profile.name} on X`}
               className='rounded-full object-cover'
             />
