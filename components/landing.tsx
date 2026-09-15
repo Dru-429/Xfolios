@@ -29,6 +29,13 @@ type LandingUser = {
   xHandle?: string | null
 }
 
+type Portfolio = {
+  'sl.no.': number
+  Username: string
+  'X url': string
+  'X image url': string
+  'portfolio url': string
+}
 
 const records = portfolios as Portfolio[]
 const PAGE_SIZE = 20

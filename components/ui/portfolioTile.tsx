@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
