@@ -90,7 +90,7 @@ export default function WebsitePage ({ page, viewer }: WebsitePageProps) {
               </div>
             </div>
             <aside className='flex min-h-[460px] flex-col p-6 lg:min-h-[680px]'>
-              <div className='flex flex-col items-start gap-5'>
+              <div className='flex flex-col items-start gap-4'>
                 <div className='flex w-full items-center justify-between'>
                   <p className='font-mono text-[12px] uppercase tracking-[0.16em] text-primary'>
                     page/<span>{' ' + page.elo} elo</span>
@@ -136,11 +136,14 @@ export default function WebsitePage ({ page, viewer }: WebsitePageProps) {
                   </div>
                 </div>
 
-                <h1 className='break-words font-display text-3xl font-medium leading-tight sm:text-4xl'>
-                  {page.title}
-                </h1>
+                <div className="flex flex-col gap-1 items-start">
+                  <h1 className='break-words font-display text-3xl font-medium leading-tight sm:text-4xl'>
+                    {page.title}
+                  </h1>
 
-                <p className='text-sm text-muted-foreground'>{domain}</p>
+                  <p className='text-sm text-muted-foreground'>{domain}</p>
+                </div>
+
 
                 {page.oneLiner ? (
                   <p className='text-sm leading-6 text-muted-foreground'>
@@ -148,29 +151,27 @@ export default function WebsitePage ({ page, viewer }: WebsitePageProps) {
                   </p>
                 ) : null}
 
-                <div className='flex flex-wrap items-center gap-2 text-sm text-muted-foreground'>
-                  <span>{page.elo} rating</span>
-                  <span aria-hidden='true'>·</span>
-                  <span>{page.bookmarked + (saved ? 1 : 0)} saved</span>
-                </div>
-
                 {page.tags.length > 0 ? (
                   <div className='flex w-full flex-nowrap gap-2'>
                     {page.tags.slice(0, 3).map(tag => (
                       <span
                         key={tag}
-                        className='rounded-md border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.08em] text-muted-foreground'
+                        className='rounded-md border border-primary/50 px-2 py-1 font-mono text-[12px] uppercase tracking-[0.08em] font-semibold text-primary/60 bg-primary/10'
                       >
                         {tag}
                       </span>
                     ))}
                   </div>
                 ) : null}
+                <div className='flex flex-wrap items-center gap-2 text-sm text-muted-foreground'>
+                  <span>{page.bookmarked + (saved ? 1 : 0)} saved</span>
+                </div>
+
               </div>
 
               <Link
                 href={`/profile/${page.user.xHandle}`}
-                className='mt-auto flex items-center gap-3 border-t border-border pt-6 transition-colors hover:text-primary'
+                className='mt-auto group flex items-center gap-3 border-t border-border pt-6 transition-colors hover:text-primary'
               >
                 <Avatar className='h-11 w-11 rounded-md border border-border'>
                   <AvatarImage
@@ -189,7 +190,7 @@ export default function WebsitePage ({ page, viewer }: WebsitePageProps) {
                     @{page.user.xHandle}
                   </span>
                 </span>
-                <ArrowUpRight className='h-4 w-4 shrink-0' aria-hidden='true' />
+                <ArrowUpRight className='h-4 w-4 shrink-0 group-hover:scale-130 transition-all ease-out' aria-hidden='true' />
               </Link>
             </aside>{' '}
           </div>
