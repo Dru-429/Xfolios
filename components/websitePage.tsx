@@ -41,12 +41,10 @@ export default function WebsitePage({ page, viewer }: WebsitePageProps) {
   const domain = page.websiteUrl
     .replace(/^https?:\/\/(www\.)?/, '')
     .replace(/\/$/, '')
-
+  
   return (
     <div className='min-h-screen bg-background text-foreground'>
-      <Navbar user={viewer} />
-
-      <main className='mx-auto w-full max-w-[1440px] px-5 pb-16 pt-7 sm:px-8 sm:pt-10 lg:px-10'>
+      <main className='mx-auto w-full min-h-screen h-full p-5 '>
         <Link
           href='/'
           className='mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground'
@@ -56,16 +54,16 @@ export default function WebsitePage({ page, viewer }: WebsitePageProps) {
         </Link>
 
         <motion.section
-          className='overflow-hidden rounded-xl border border-border bg-card'
+          className='overflow-hidden rounded-xl sm:rounded-r-none border border-border bg-card'
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
         >
-          <div className='grid lg:grid-cols-[minmax(0,7fr)_minmax(280px,3fr)]'>
-            <div className='relative min-h-[460px] border-b border-border bg-secondary/40 p-4 sm:min-h-[600px] sm:p-7 lg:min-h-[680px] lg:border-b-0 lg:border-r'>
-              <div className='relative flex h-full min-h-[420px] items-center justify-center overflow-hidden rounded-lg border border-border bg-background sm:min-h-[540px] lg:min-h-[620px]'>
+          <div className='grid lg:grid-cols-[minmax(0,7.5fr)_minmax(250px,2.5fr)]'>
+            <div className='relative min-h-[460px] border-b border-border bg-secondary/40 p-4 sm:min-h-[600px] sm:p-0 lg:min-h-[680px] lg:border-b-0 lg:border-r sm:h-[90vh]'>
+              <div className='relative flex h-full min-h-[420px] items-center justify-center overflow-hidden rounded-lg border border-border bg-background sm:min-h-[80vh]'>
                 <div className='absolute inset-0 preview-warm opacity-50' aria-hidden='true' />
-                <div className='relative z-10 flex h-full w-full items-center justify-center p-3 sm:p-6'>
+                <div className='relative z-10 flex h-full w-full items-center justify-center p-2 sm:p-6'>
                   <iframe
                     src={page.websiteUrl}
                     title={`${page.title} website`}
@@ -171,8 +169,6 @@ export default function WebsitePage({ page, viewer }: WebsitePageProps) {
           </div>
         </motion.section>
       </main>
-
-      <Footer />
     </div>
   )
 }
