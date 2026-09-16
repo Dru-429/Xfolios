@@ -12,10 +12,8 @@ import {
 import Link from 'next/link'
 import { useState } from 'react'
 
-import Footer from '@/components/ui/footer'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Navbar } from '@/components/ui/Navbar'
 
 export type WebsitePageData = {
   id: string
@@ -207,7 +205,7 @@ export default function WebsitePage ({ page, viewer }: WebsitePageProps) {
 
       {isPreviewExpanded ? (
         <div
-          className='fixed inset-0 z-[100] flex flex-col bg-zinc-900/40 dark:bg-background p-3 sm:p-5'
+          className='fixed inset-0 z-100 flex flex-col bg-zinc-900/40 dark:bg-background p-3 sm:p-5'
           role='dialog'
           aria-modal='true'
           aria-label={`${page.title} website preview`}
