@@ -1,7 +1,14 @@
 'use client'
 
 import { motion } from 'motion/react'
-import { ArrowLeft, ArrowUpRight, Bookmark, ExternalLink } from 'lucide-react'
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  Bookmark,
+  ExternalLink,
+  Maximize2,
+  X
+} from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -37,6 +44,7 @@ type WebsitePageProps = {
 
 export default function WebsitePage ({ page, viewer }: WebsitePageProps) {
   const [saved, setSaved] = useState(false)
+  const [isPreviewExpanded, setIsPreviewExpanded] = useState(false)
   const initials = page.user.xUsername.trim().slice(0, 2).toUpperCase()
   const domain = page.websiteUrl
     .replace(/^https?:\/\/(www\.)?/, '')
@@ -75,20 +83,20 @@ export default function WebsitePage ({ page, viewer }: WebsitePageProps) {
                     referrerPolicy='no-referrer'
                   />
                 </div>
-                <a
-                  href={page.websiteUrl}
-                  target='_blank'
-                  rel='noreferrer'
+                <button
+                  type='button'
+                  onClick={() => setIsPreviewExpanded(true)}
                   className='absolute bottom-5 right-5 z-20 inline-flex h-10 w-10 items-center justify-center rounded-md border border-border bg-card/95 text-foreground shadow-sm transition-colors hover:border-primary hover:text-primary'
-                  aria-label={`Open ${domain} in a new tab`}
+                  aria-label='Expand website preview'
                 >
-                  <ArrowUpRight className='h-5 w-5' aria-hidden='true' />
-                </a>
+                  <Maximize2 className='h-5 w-5' aria-hidden='true' />
+                </button>
                 <span className='absolute bottom-5 left-5 z-20 rounded-full bg-card/95 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground'>
                   live preview
                 </span>
               </div>
             </div>
+            
             <aside className='flex min-h-[460px] flex-col p-6 lg:min-h-[680px]'>
               <div className='flex flex-col items-start gap-4'>
                 <div className='flex w-full items-center justify-between'>
@@ -196,6 +204,37 @@ export default function WebsitePage ({ page, viewer }: WebsitePageProps) {
           </div>
         </motion.section>
       </main>
+
+      {isPreviewExpanded ? (
+        <div
+          className='fixed inset-0 z-[100] flex flex-col bg-zinc-900/40 dark:bg-background p-3 sm:p-5'
+          role='dialog'
+          aria-modal='true'
+          aria-label={`${page.title} website preview`}
+        >
+          <div className='mb-3 flex items-center justify-between gap-3'>
+            <p className='truncate font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground'>
+              {domain} / live preview
+            </p>
+            <Button
+              type='button'
+              variant='outline'
+              size='icon'
+              onClick={() => setIsPreviewExpanded(false)}
+              aria-label='Close expanded website preview'
+              className='shrink-0 rounded-md'
+            >
+              <X aria-hidden='true' />
+            </Button>
+          </div>
+          <iframe
+            src={page.websiteUrl}
+            title={`${page.title} website fullscreen preview`}
+            className='min-h-0 flex-1 rounded-md border border-border bg-card'
+            referrerPolicy='no-referrer'
+          />
+        </div>
+      ) : null}
     </div>
   )
 }
