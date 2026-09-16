@@ -35,13 +35,13 @@ type WebsitePageProps = {
   } | null
 }
 
-export default function WebsitePage({ page, viewer }: WebsitePageProps) {
+export default function WebsitePage ({ page, viewer }: WebsitePageProps) {
   const [saved, setSaved] = useState(false)
   const initials = page.user.xUsername.trim().slice(0, 2).toUpperCase()
   const domain = page.websiteUrl
     .replace(/^https?:\/\/(www\.)?/, '')
     .replace(/\/$/, '')
-  
+
   return (
     <div className='min-h-screen bg-background text-foreground'>
       <main className='mx-auto w-full min-h-screen h-full p-5 '>
@@ -60,9 +60,12 @@ export default function WebsitePage({ page, viewer }: WebsitePageProps) {
           transition={{ duration: 0.4, ease: 'easeOut' }}
         >
           <div className='grid lg:grid-cols-[minmax(0,7.5fr)_minmax(250px,2.5fr)]'>
-            <div className='relative min-h-[460px] border-b border-border bg-secondary/40 p-4 sm:min-h-[600px] sm:p-0 lg:min-h-[680px] lg:border-b-0 lg:border-r sm:h-[90vh]'>
+            <div className='relative min-h-[460px] border-b border-border bg-secondary/40 p-4 sm:min-h-[600px] sm:p-0 lg:border-b-0 lg:border-r sm:h-[90vh]'>
               <div className='relative flex h-full min-h-[420px] items-center justify-center overflow-hidden rounded-lg border border-border bg-background sm:min-h-[80vh]'>
-                <div className='absolute inset-0 preview-warm opacity-50' aria-hidden='true' />
+                <div
+                  className='absolute inset-0 preview-warm opacity-50'
+                  aria-hidden='true'
+                />
                 <div className='relative z-10 flex h-full w-full items-center justify-center p-2 sm:p-6'>
                   <iframe
                     src={page.websiteUrl}
@@ -86,32 +89,74 @@ export default function WebsitePage({ page, viewer }: WebsitePageProps) {
                 </span>
               </div>
             </div>
+            <aside className='flex min-h-[460px] flex-col p-6 lg:min-h-[680px]'>
+              <div className='flex flex-col items-start gap-5'>
+                <div className='flex w-full items-center justify-between'>
+                  <p className='font-mono text-[12px] uppercase tracking-[0.16em] text-primary'>
+                    page/<span>{' ' + page.elo} elo</span>
+                  </p>
 
-            <aside className='flex min-h-[460px] flex-col p-6 sm:p-8 lg:min-h-[680px] lg:p-10'>
-              <div>
-                <p className='font-mono text-[10px] uppercase tracking-[0.16em] text-primary'>
-                  folio / {page.id.slice(0, 8)}
-                </p>
-                <h1 className='mt-5 break-words font-display text-3xl font-medium leading-tight sm:text-4xl'>
+                  <div className='flex items-center gap-2'>
+                    <Button
+                      asChild
+                      size='lg'
+                      variant='outline'
+                      aria-label={`Open ${domain}`}
+                      className='rounded-sm px-3'
+                    >
+                      <a
+                        href={page.websiteUrl}
+                        target='_blank'
+                        rel='noreferrer'
+                      >
+                        <ExternalLink aria-hidden='true' />
+                      </a>
+                    </Button>
+
+                    <Button
+                      type='button'
+                      size='lg'
+                      onClick={() => setSaved(current => !current)}
+                      aria-label={
+                        saved ? 'Remove from saved folios' : 'Save folio'
+                      }
+                      aria-pressed={saved}
+                      className={
+                        saved
+                          ? 'border-primary text-primary rounded-sm'
+                          : 'rounded-sm py-1'
+                      }
+                    >
+                      <Bookmark
+                        className={saved ? 'fill-current' : ''}
+                        aria-hidden='true'
+                      />
+                      {saved ? 'Saved' : 'Save'}
+                    </Button>
+                  </div>
+                </div>
+
+                <h1 className='break-words font-display text-3xl font-medium leading-tight sm:text-4xl'>
                   {page.title}
                 </h1>
-                <p className='mt-2 text-sm text-muted-foreground'>{domain}</p>
+
+                <p className='text-sm text-muted-foreground'>{domain}</p>
 
                 {page.oneLiner ? (
-                  <p className='mt-5 text-sm leading-6 text-muted-foreground'>
+                  <p className='text-sm leading-6 text-muted-foreground'>
                     {page.oneLiner}
                   </p>
                 ) : null}
 
-                <div className='mt-8 flex flex-wrap items-center gap-2 text-sm text-muted-foreground'>
+                <div className='flex flex-wrap items-center gap-2 text-sm text-muted-foreground'>
                   <span>{page.elo} rating</span>
                   <span aria-hidden='true'>·</span>
                   <span>{page.bookmarked + (saved ? 1 : 0)} saved</span>
                 </div>
 
                 {page.tags.length > 0 ? (
-                  <div className='mt-5 flex flex-wrap gap-2'>
-                    {page.tags.map(tag => (
+                  <div className='flex w-full flex-nowrap gap-2'>
+                    {page.tags.slice(0, 3).map(tag => (
                       <span
                         key={tag}
                         className='rounded-md border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.08em] text-muted-foreground'
@@ -121,25 +166,6 @@ export default function WebsitePage({ page, viewer }: WebsitePageProps) {
                     ))}
                   </div>
                 ) : null}
-
-                <div className='mt-7 flex items-center gap-3'>
-                  <Button
-                    type='button'
-                    variant='outline'
-                    size='icon'
-                    onClick={() => setSaved(current => !current)}
-                    aria-label={saved ? 'Remove from saved folios' : 'Save folio'}
-                    aria-pressed={saved}
-                    className={saved ? 'border-primary text-primary' : ''}
-                  >
-                    <Bookmark className={saved ? 'fill-current' : ''} aria-hidden='true' />
-                  </Button>
-                  <Button asChild size='icon' variant='outline' aria-label={`Open ${domain}`}>
-                    <a href={page.websiteUrl} target='_blank' rel='noreferrer'>
-                      <ExternalLink aria-hidden='true' />
-                    </a>
-                  </Button>
-                </div>
               </div>
 
               <Link
@@ -165,7 +191,7 @@ export default function WebsitePage({ page, viewer }: WebsitePageProps) {
                 </span>
                 <ArrowUpRight className='h-4 w-4 shrink-0' aria-hidden='true' />
               </Link>
-            </aside>
+            </aside>{' '}
           </div>
         </motion.section>
       </main>
