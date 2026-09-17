@@ -92,7 +92,7 @@ export default function PortfolioTile ({
       {portfolio.pageId ? (
         <button
           type='button'
-          className='absolute right-4 top-4 z-10 inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-card/90 text-primary opacity-0 shadow-sm transition-opacity group-hover:opacity-100 focus-visible:opacity-100'
+          className='absolute righ-0 top-0 pr-4 z-10 inline-flex h-9 w-full items-center justify-end text-white opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 bg-linear-to-b from-black/80 to-transparent cursor-pointer'
           aria-label={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
           aria-pressed={isBookmarked}
           disabled={isUpdatingBookmark}
