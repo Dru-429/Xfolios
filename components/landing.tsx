@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/button'
 import portfolios from '@/data/portfolios.json'
 import { Navbar } from './ui/Navbar'
 import Hero from './ui/Hero'
-import PortfolioTile from './ui/portfolioTile';
+import PortfolioTile from './ui/pageTile';
 import Footer from './ui/footer';
 
 type LandingUser = {

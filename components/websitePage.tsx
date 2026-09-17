@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import EditPage from '@/components/ui/editPage'
 import { setBookmark } from '@/app/page/[pageId]/actions'
+import { ThemeToggle } from './ui/Navbar';
 
 export type WebsitePageData = {
   id: string
@@ -82,8 +83,10 @@ export default function WebsitePage ({ page, viewer, isSaved, isOwner }: Website
           href='/'
           className='mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground'
         >
-          <ArrowLeft className='h-4 w-4' aria-hidden='true' />
-          All folios
+          <div className=" inline-flex items-center gap-2 text-sm">
+            <ArrowLeft className='h-4 w-4' aria-hidden='true' />
+            All folios
+          </div>
         </Link>
 
         <motion.section
@@ -253,18 +256,17 @@ export default function WebsitePage ({ page, viewer, isSaved, isOwner }: Website
 
       {isPreviewExpanded ? (
         <div
-          className='fixed inset-0 z-100 flex flex-col bg-zinc-900/40 dark:bg-background p-3 sm:p-5'
+          className='fixed inset-0 z-100 flex flex-col bg-zinc-900/80 dark:bg-background p-3 sm:p-5'
           role='dialog'
           aria-modal='true'
           aria-label={`${page.title} website preview`}
         >
           <div className='mb-3 flex items-center justify-between gap-3'>
-            <p className='truncate font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground'>
-              {domain} / live preview
+            <p className='truncate font-mono text-[10px] uppercase tracking-[0.14em] text- px-2 py-1 text-background bg-primary/90'>
+              {domain} / full screen preview
             </p>
             <Button
               type='button'
-              variant='outline'
               size='icon'
               onClick={() => setIsPreviewExpanded(false)}
               aria-label='Close expanded website preview'

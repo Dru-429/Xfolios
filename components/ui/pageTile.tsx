@@ -3,9 +3,10 @@
 import { motion } from "motion/react";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Bookmark, Star } from "lucide-react";
 import Image from "next/image";
 import Link from 'next/link'
+import { setBookmark } from '@/app/page/[pageId]/actions'
 
 
 type Portfolio = {
@@ -15,18 +16,26 @@ type Portfolio = {
   'X url': string
   'X image url': string
   'portfolio url': string
+  elo?: number
+  bookmarked?: boolean
+  isAuthenticated?: boolean
 }
 
 export default function PortfolioTile ({
   portfolio,
-  index
+  index,
+  isAuthenticated
 }: {
   portfolio: Portfolio
   index: number
+  isAuthenticated?: boolean
 }) {
   const [hasPreviewError, setHasPreviewError] = useState(false)
+  const [isBookmarked, setIsBookmarked] = useState(portfolio.bookmarked ?? false)
+  const [isUpdatingBookmark, setIsUpdatingBookmark] = useState(false)
   const [rawName, handle] = portfolio.Username.split(' - ')
   const name = rawName ?? portfolio.Username
+  const elo = portfolio.elo ?? 0
   const portfolioUrl = portfolio['portfolio url']
   const domain = portfolio['portfolio url']
     .replace(/^https?:\/\/(www\.)?/, '')
@@ -35,7 +44,7 @@ export default function PortfolioTile ({
 
   return (
     <motion.article
-      className='group min-w-0 overflow-hidden rounded-lg border border-border bg-card transition-colors duration-300 hover:border-primary/60'
+      className='group relative min-w-0 overflow-hidden rounded-lg border border-border bg-card transition-colors duration-300 hover:border-primary/60 p-1'
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(index * 0.025, 0.3), duration: 0.35 }}
@@ -54,6 +63,8 @@ export default function PortfolioTile ({
             portfolioUrl={portfolioUrl}
             hasPreviewError={hasPreviewError}
             setHasPreviewError={setHasPreviewError}
+            domain={domain}
+            isAuthenticated={isAuthenticated ?? false}
           />
         </Link>
       ) : (
@@ -72,11 +83,40 @@ export default function PortfolioTile ({
             portfolioUrl={portfolioUrl}
             hasPreviewError={hasPreviewError}
             setHasPreviewError={setHasPreviewError}
+            domain={domain}
+            isAuthenticated={isAuthenticated ?? false}
           />
         </a>
       )}
-      <div className='truncate border-t border-border/70 px-3 pb-3 font-mono text-[10px] text-muted-foreground sm:px-4'>
-        {domain}
+      
+      {portfolio.pageId ? (
+        <button
+          type='button'
+          className='absolute right-4 top-4 z-10 inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-card/90 text-primary opacity-0 shadow-sm transition-opacity group-hover:opacity-100 focus-visible:opacity-100'
+          aria-label={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
+          aria-pressed={isBookmarked}
+          disabled={isUpdatingBookmark}
+          onClick={async event => {
+            event.preventDefault()
+            event.stopPropagation()
+            if (!isAuthenticated) {
+              window.location.href = `/signin?callbackUrl=/page/${portfolio.pageId}`
+              return
+            }
+            setIsUpdatingBookmark(true)
+            try {
+              const result = await setBookmark(portfolio.pageId!, !isBookmarked)
+              setIsBookmarked(result.saved)
+            } finally {
+              setIsUpdatingBookmark(false)
+            }
+          }}
+        >
+          <Bookmark className={isBookmarked ? 'fill-current' : ''} aria-hidden='true' />
+        </button>
+      ) : null}
+      <div className='truncate tracking-wider border-t border-border/70 px-3 pb-3 font-mono text-[12px] text-primary/90 sm:px-4'>
+        
       </div>
     </motion.article>
   )
@@ -90,6 +130,7 @@ function PortfolioTileContent ({
   portfolioUrl,
   hasPreviewError,
   setHasPreviewError
+  ,domain
 }: {
   portfolio: Portfolio
   name: string
@@ -98,11 +139,12 @@ function PortfolioTileContent ({
   portfolioUrl: string
   hasPreviewError: boolean
   setHasPreviewError: Dispatch<SetStateAction<boolean>>
+  domain: string
 }) {
   return (
     <>
         <div
-          className={`relative aspect-[1.48] overflow-hidden border-b border-border`}
+          className={`relative aspect-[1.48] overflow-hidden border-b border-border rounded-t-md `}
         >
           {!hasPreviewError ? (
             <PortfolioPreview
@@ -113,13 +155,12 @@ function PortfolioTileContent ({
           ) : (
             <PreviewFallback />
           )}
-          <span className='absolute right-[9%] top-[8%] font-mono text-[8px] text-foreground/60'>
-            {String(portfolio['sl.no.']).padStart(3, '0')}
+          <span className='pointer-events-none absolute inset-x-0 bottom-0 translate-y-2 bg-gradient-to-t from-black/80 to-transparent px-4 pb-4 pt-10 text-sm font-medium text-white opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100'>
+            {domain}
           </span>
-          <span className='absolute bottom-[7%] left-[9%] font-mono text-[8px] uppercase tracking-[0.12em] text-foreground/50'>
-            view site ↗
-          </span>
+
         </div>
+
         <div className='flex min-w-0 items-center gap-3 p-3 sm:p-4'>
           <Avatar className='h-9 w-9 shrink-0 rounded-md border border-border'>
             <AvatarImage

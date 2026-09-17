@@ -38,7 +38,7 @@ function NavPill ({
   )
 }
 
-function ThemeToggle ({
+export function ThemeToggle ({
   isDark,
   toggleTheme
 }: {

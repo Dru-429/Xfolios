@@ -9,7 +9,7 @@ import Footer from '@/components/ui/footer'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Navbar } from '@/components/ui/Navbar'
-import PortfolioTile from '@/components/ui/portfolioTile'
+import PortfolioTile from '@/components/ui/pageTile'
 
 type ProfilePageUser = {
   name: string
@@ -24,6 +24,8 @@ type ProfilePageItem = {
   title: string
   websiteUrl: string
   coverUrl: string | null
+  elo: number
+  bookmarked: boolean
 }
 
 type ProfilePageProps = {
@@ -31,6 +33,7 @@ type ProfilePageProps = {
   pages: ProfilePageItem[]
   bookmarks: ProfilePageItem[]
   isOwner: boolean
+  isAuthenticated: boolean
 }
 
 type ProfileTab = 'folios' | 'saved'
@@ -43,7 +46,9 @@ function toPortfolioTile (
   return {
     'sl.no.': index + 1,
     pageId: page.id,
-    Username: `${page.title} - @${profile.handle}`,
+    elo: page.elo,
+    bookmarked: page.bookmarked,
+    Username: `${profile.name} - @${profile.handle}`,
     'X url': `https://x.com/${profile.handle}`,
     'X image url': profile.avatar ?? '',
     'portfolio url': page.websiteUrl
@@ -52,10 +57,12 @@ function toPortfolioTile (
 
 function PageGrid ({
   pages,
-  profile
+  profile,
+  isAuthenticated
 }: {
   pages: ProfilePageItem[]
   profile: ProfilePageUser
+  isAuthenticated: boolean
 }) {
   if (pages.length === 0) {
     return (
@@ -71,6 +78,7 @@ function PageGrid ({
         <PortfolioTile
           key={page.id}
           portfolio={toPortfolioTile(page, profile, index)}
+          isAuthenticated={isAuthenticated}
           index={index}
         />
       ))}
@@ -82,7 +90,8 @@ export default function ProfilePage ({
   profile,
   pages,
   bookmarks,
-  isOwner
+  isOwner,
+  isAuthenticated
 }: ProfilePageProps) {
   const [activeTab, setActiveTab] = useState<ProfileTab>('folios')
   const initials = profile.name.trim().slice(0, 2).toUpperCase()
@@ -101,7 +110,7 @@ export default function ProfilePage ({
         }
       />
 
-      <main className='mx-auto w-full max-w-4xl px-5 pb-20 pt-8 sm:px-8 sm:pt-12'>
+      <main className='mx-auto w-full max-w-6xl px-5 pb-20 pt-8 sm:px-8 sm:pt-12'>
         <Link
           href='/'
           className='mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground'
@@ -249,7 +258,7 @@ export default function ProfilePage ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <PageGrid pages={pages} profile={profile} />   
+              <PageGrid pages={pages} profile={profile} isAuthenticated={isAuthenticated} />
             </motion.div>
           ) : (
             <motion.div
@@ -259,7 +268,7 @@ export default function ProfilePage ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <PageGrid pages={bookmarks} profile={profile} />
+              <PageGrid pages={bookmarks} profile={profile} isAuthenticated={isAuthenticated} />
             </motion.div>
           )}
         </AnimatePresence>
