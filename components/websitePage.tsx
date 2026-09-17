@@ -14,6 +14,7 @@ import { useState } from 'react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import EditPage from '@/components/ui/editPage'
 import { setBookmark } from '@/app/page/[pageId]/actions'
 
 export type WebsitePageData = {
@@ -40,15 +41,17 @@ type WebsitePageProps = {
     xHandle?: string | null
   } | null
   isSaved: boolean
+  isOwner: boolean
 }
 
-export default function WebsitePage ({ page, viewer, isSaved }: WebsitePageProps) {
+export default function WebsitePage ({ page, viewer, isSaved, isOwner }: WebsitePageProps) {
   const [saved, setSaved] = useState(isSaved)
   const [bookmarkCount, setBookmarkCount] = useState(page.bookmarked)
   const [isUpdatingBookmark, setIsUpdatingBookmark] = useState(false)
   const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false)
   const [bookmarkError, setBookmarkError] = useState('')
   const [isPreviewExpanded, setIsPreviewExpanded] = useState(false)
+  const [isEditOpen, setIsEditOpen] = useState(false)
   const initials = page.user.xUsername.trim().slice(0, 2).toUpperCase()
   const domain = page.websiteUrl
     .replace(/^https?:\/\/(www\.)?/, '')
@@ -124,6 +127,17 @@ export default function WebsitePage ({ page, viewer, isSaved }: WebsitePageProps
                   </p>
 
                   <div className='flex items-center gap-2'>
+                    {isOwner ? (
+                      <Button
+                        type='button'
+                        size='lg'
+                        variant='outline'
+                        onClick={() => setIsEditOpen(true)}
+                        className='rounded-sm px-3'
+                      >
+                        Edit
+                      </Button>
+                    ) : null}
                     <Button
                       asChild
                       size='lg'
@@ -300,6 +314,9 @@ export default function WebsitePage ({ page, viewer, isSaved }: WebsitePageProps
             </div>
           </div>
         </div>
+      ) : null}
+      {isEditOpen ? (
+        <EditPage page={page} onClose={() => setIsEditOpen(false)} />
       ) : null}
     </div>
   )

@@ -36,6 +36,7 @@ export default async function WebsitePageRoute({
       page={page}
       viewer={session?.user ?? null}
       isSaved={page.bookmarks.length > 0}
+      isOwner={session?.user?.id === page.userId}
     />
   )
 }

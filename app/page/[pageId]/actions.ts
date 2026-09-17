@@ -55,3 +55,57 @@ export async function setBookmark(pageId: string, shouldSave: boolean) {
 
   return { saved: false, bookmarked: Math.max(page?.bookmarked ?? 0, 0) }
 }
+
+export async function updatePage(pageId: string, formData: FormData) {
+  const session = await auth()
+  const userId = session?.user?.id
+
+  if (!userId) {
+    throw new Error('Sign in to edit this page.')
+  }
+
+  const page = await prisma.page.findUnique({
+    where: { id: pageId },
+    select: { userId: true }
+  })
+
+  if (!page || page.userId !== userId) {
+    throw new Error('You can only edit your own pages.')
+  }
+
+  const websiteUrl = String(formData.get('websiteUrl') ?? '').trim()
+  const coverUrl = String(formData.get('coverUrl') ?? '').trim()
+  const title = String(formData.get('title') ?? '').trim()
+  const oneLiner = String(formData.get('oneLiner') ?? '').trim()
+  const tags = String(formData.get('tags') ?? '')
+    .split(',')
+    .map(tag => tag.trim())
+    .filter(Boolean)
+    .slice(0, 8)
+
+  try {
+    const parsedUrl = new URL(websiteUrl)
+    if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+      throw new Error()
+    }
+  } catch {
+    throw new Error('Enter a valid HTTP or HTTPS website URL.')
+  }
+
+  if (!title) {
+    throw new Error('Title cannot be empty.')
+  }
+
+  const updatedPage = await prisma.page.update({
+    where: { id: pageId },
+    data: {
+      websiteUrl,
+      coverUrl: coverUrl || null,
+      title,
+      oneLiner: oneLiner || null,
+      tags,
+    }
+  })
+
+  return updatedPage
+}
