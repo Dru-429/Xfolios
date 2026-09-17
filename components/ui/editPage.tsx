@@ -31,7 +31,7 @@ export default function EditPage ({ page, onClose }: EditPageProps) {
   const [isDeleting, setIsDeleting] = useState(false)
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
   const [deleteConfirmation, setDeleteConfirmation] = useState('')
-  const [tags, setTags] = useState<string[]>([])
+  const [tags, setTags] = useState<string[]>(page.tags)
   const [tagValue, setTagValue] = useState('')
 
   const remainingTags = useMemo(
@@ -100,6 +100,7 @@ export default function EditPage ({ page, onClose }: EditPageProps) {
         action={handleSubmit}
         className='mx-auto my-6 w-full max-w-2xl rounded-xl border border-border bg-card p-6 shadow-xl sm:p-8'
       >
+        <input type='hidden' name='tags' value={tags.join(',')} />
         <div className='flex items-start justify-between gap-4 border-b border-border pb-5'>
           <div>
             <p className='font-mono text-[10px] uppercase tracking-[0.16em] text-primary'>
@@ -185,21 +186,6 @@ export default function EditPage ({ page, onClose }: EditPageProps) {
 
           <div>
             <label
-              htmlFor='edit-tags'
-              className='mb-2 block text-sm font-medium'
-            >
-              Tags
-            </label>
-            <Input
-              id='edit-tags'
-              name='tags'
-              defaultValue={page.tags.join(', ')}
-              placeholder='Design, Portfolio'
-            />
-          </div>
-
-          <div>
-            <label
               htmlFor='folio-tags'
               className='mb-2 block text-sm font-medium'
             >
@@ -250,27 +236,7 @@ export default function EditPage ({ page, onClose }: EditPageProps) {
             {error}
           </p>
         ) : null}
-
-        <div className='mt-7 flex justify-end gap-2 border-t border-border pt-5'>
-          <Button
-            type='button'
-            variant='outline'
-            onClick={onClose}
-            disabled={isSaving}
-            className="rounded-md"
-          >
-            Cancel
-          </Button>
-          <Button 
-            type='submit' 
-            disabled={isSaving}
-            className="rounded-md"
-          >
-            {isSaving ? 'Saving...' : 'Save changes'}
-          </Button>
-        </div>
-
-        <div className='mt-8 border-t border-destructive/30 pt-5'>
+                <div className='mt-8 border-t border-destructive/30 pt-5'>
           <div className='flex items-start gap-3'>
             <AlertTriangle className='mt-0.5 h-4 w-4 shrink-0 text-destructive' aria-hidden='true' />
             <div>
@@ -295,7 +261,25 @@ export default function EditPage ({ page, onClose }: EditPageProps) {
             Delete page
           </Button>
         </div>
-      </form>
+
+        <div className='mt-7 flex justify-end gap-2 border-t border-border pt-5'>
+          <Button
+            type='button'
+            variant='outline'
+            onClick={onClose}
+            disabled={isSaving}
+            className="rounded-md"
+          >
+            Cancel
+          </Button>
+          <Button 
+            type='submit' 
+            disabled={isSaving}
+            className="rounded-md"
+          >
+            {isSaving ? 'Saving...' : 'Save changes'}
+          </Button>
+        </div>
 
       {showDeleteConfirmation ? (
         <div
@@ -316,7 +300,7 @@ export default function EditPage ({ page, onClose }: EditPageProps) {
               onChange={event => setDeleteConfirmation(event.target.value)}
               placeholder='DELETE'
               autoFocus
-              className='mt-4 '
+              className='mt-4 bg-destructive/20 border-destructive/40 ring-destructive/20 dark:hover:bg-destructive/30 dark:ring-destructive/40'
               aria-label='Type DELETE to confirm page deletion'
             />
             <div className='mt-6 flex justify-end gap-2'>
@@ -340,6 +324,7 @@ export default function EditPage ({ page, onClose }: EditPageProps) {
           </div>
         </div>
       ) : null}
+      </form>
     </div>
   )
 }
