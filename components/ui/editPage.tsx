@@ -1,9 +1,9 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { ChevronDown, X } from 'lucide-react'
+import { AlertTriangle, ChevronDown, Trash2, X } from 'lucide-react'
 
-import { updatePage } from '@/app/page/[pageId]/actions'
+import { deletePage, updatePage } from '@/app/page/[pageId]/actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -28,6 +28,9 @@ const tagOptions = ['AI', 'SaaS', 'Portfolio', 'Hardware', 'Design', 'Developer 
 export default function EditPage ({ page, onClose }: EditPageProps) {
   const [error, setError] = useState('')
   const [isSaving, setIsSaving] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+  const [deleteConfirmation, setDeleteConfirmation] = useState('')
   const [tags, setTags] = useState<string[]>([])
   const [tagValue, setTagValue] = useState('')
 
@@ -42,7 +45,7 @@ export default function EditPage ({ page, onClose }: EditPageProps) {
 
     try {
       await updatePage(page.id, formData)
-      window.location.reload()
+      window.location.reload() 
     } catch (submitError) {
       setError(
         submitError instanceof Error
@@ -62,6 +65,28 @@ export default function EditPage ({ page, onClose }: EditPageProps) {
 
   function removeTag (tag: string) {
     setTags(current => current.filter(item => item !== tag))
+  }
+
+  async function handleDelete () {
+    if (deleteConfirmation !== 'DELETE') {
+      setError('Type DELETE exactly to confirm removal.')
+      return
+    }
+
+    setError('')
+    setIsDeleting(true)
+
+    try {
+      const result = await deletePage(page.id)
+      window.location.href = result.redirectTo
+    } catch (deleteError) {
+      setError(
+        deleteError instanceof Error
+          ? deleteError.message
+          : 'Could not delete this page.'
+      )
+      setIsDeleting(false)
+    }
   }
 
   return (
@@ -232,14 +257,89 @@ export default function EditPage ({ page, onClose }: EditPageProps) {
             variant='outline'
             onClick={onClose}
             disabled={isSaving}
+            className="rounded-md"
           >
             Cancel
           </Button>
-          <Button type='submit' disabled={isSaving}>
+          <Button 
+            type='submit' 
+            disabled={isSaving}
+            className="rounded-md"
+          >
             {isSaving ? 'Saving...' : 'Save changes'}
           </Button>
         </div>
+
+        <div className='mt-8 border-t border-destructive/30 pt-5'>
+          <div className='flex items-start gap-3'>
+            <AlertTriangle className='mt-0.5 h-4 w-4 shrink-0 text-destructive' aria-hidden='true' />
+            <div>
+              <p className='text-sm font-medium text-destructive'>Delete this page</p>
+              <p className='mt-1 text-xs leading-5 text-muted-foreground'>
+                This action permanently removes the page.
+              </p>
+            </div>
+          </div>
+          <Button
+            type='button'
+            variant='destructive'
+            onClick={() => {
+              setError('')
+              setDeleteConfirmation('')
+              setShowDeleteConfirmation(true)
+            }}
+            disabled={isSaving || isDeleting}
+            className='mt-4 rounded-md'
+          >
+            <Trash2 aria-hidden='true' />
+            Delete page
+          </Button>
+        </div>
       </form>
+
+      {showDeleteConfirmation ? (
+        <div
+          className='fixed inset-0 z-[130] grid place-items-center bg-black/60 p-5'
+          role='dialog'
+          aria-modal='true'
+          aria-labelledby='confirm-delete-page-title'
+        >
+          <div className='w-full max-w-md rounded-lg border border-destructive/40 bg-card p-6 shadow-xl'>
+            <h3 id='confirm-delete-page-title' className='font-display text-xl'>
+              Delete this page?
+            </h3>
+            <p className='mt-3 text-sm leading-6 text-muted-foreground'>
+              Type <strong className='font-mono text-foreground'>DELETE</strong> to permanently remove this page.
+            </p>
+            <Input
+              value={deleteConfirmation}
+              onChange={event => setDeleteConfirmation(event.target.value)}
+              placeholder='DELETE'
+              autoFocus
+              className='mt-4 '
+              aria-label='Type DELETE to confirm page deletion'
+            />
+            <div className='mt-6 flex justify-end gap-2'>
+              <Button
+                type='button'
+                variant='outline'
+                onClick={() => setShowDeleteConfirmation(false)}
+                disabled={isDeleting}
+              >
+                Cancel
+              </Button>
+              <Button
+                type='button'
+                variant='destructive'
+                onClick={() => void handleDelete()}
+                disabled={isDeleting || deleteConfirmation !== 'DELETE'}
+              >
+                {isDeleting ? 'Deleting...' : 'Yes'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }

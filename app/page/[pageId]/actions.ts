@@ -109,3 +109,36 @@ export async function updatePage(pageId: string, formData: FormData) {
 
   return updatedPage
 }
+
+export async function deletePage(pageId: string) {
+  const session = await auth()
+  const userId = session?.user?.id
+
+  if (!userId) {
+    throw new Error('Sign in to delete this page.')
+  }
+
+  const page = await prisma.page.findUnique({
+    where: { id: pageId },
+    select: { userId: true }
+  })
+
+  if (!page || page.userId !== userId) {
+    throw new Error('You can only delete your own pages.')
+  }
+
+  await prisma.$transaction([
+    prisma.page.delete({ where: { id: pageId } }),
+    prisma.user.updateMany({
+      where: { id: userId, totalPage: { gt: 0 } },
+      data: { totalPage: { decrement: 1 } }
+    })
+  ])
+
+  const owner = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { xHandle: true }
+  })
+
+  return { redirectTo: owner ? `/profile/${owner.xHandle}` : '/' }
+}
