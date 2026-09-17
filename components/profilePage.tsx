@@ -249,7 +249,7 @@ export default function ProfilePage ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <PageGrid pages={pages} profile={profile} />
+              <PageGrid pages={pages} profile={profile} />   
             </motion.div>
           ) : (
             <motion.div
