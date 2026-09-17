@@ -14,6 +14,7 @@ import { useState } from 'react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import { setBookmark } from '@/app/page/[pageId]/actions'
 
 export type WebsitePageData = {
   id: string
@@ -38,15 +39,38 @@ type WebsitePageProps = {
     image?: string | null
     xHandle?: string | null
   } | null
+  isSaved: boolean
 }
 
-export default function WebsitePage ({ page, viewer }: WebsitePageProps) {
-  const [saved, setSaved] = useState(false)
+export default function WebsitePage ({ page, viewer, isSaved }: WebsitePageProps) {
+  const [saved, setSaved] = useState(isSaved)
+  const [bookmarkCount, setBookmarkCount] = useState(page.bookmarked)
+  const [isUpdatingBookmark, setIsUpdatingBookmark] = useState(false)
+  const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false)
+  const [bookmarkError, setBookmarkError] = useState('')
   const [isPreviewExpanded, setIsPreviewExpanded] = useState(false)
   const initials = page.user.xUsername.trim().slice(0, 2).toUpperCase()
   const domain = page.websiteUrl
     .replace(/^https?:\/\/(www\.)?/, '')
     .replace(/\/$/, '')
+
+  async function updateBookmark (shouldSave: boolean) {
+    setBookmarkError('')
+    setIsUpdatingBookmark(true)
+
+    try {
+      const result = await setBookmark(page.id, shouldSave)
+      setSaved(result.saved)
+      setBookmarkCount(result.bookmarked)
+      setShowRemoveConfirmation(false)
+    } catch (error) {
+      setBookmarkError(
+        error instanceof Error ? error.message : 'Could not update bookmark.'
+      )
+    } finally {
+      setIsUpdatingBookmark(false)
+    }
+  }
 
   return (
     <div className='min-h-screen bg-background text-foreground'>
@@ -89,9 +113,6 @@ export default function WebsitePage ({ page, viewer }: WebsitePageProps) {
                 >
                   <Maximize2 className='h-5 w-5' aria-hidden='true' />
                 </button>
-                <span className='absolute bottom-5 left-5 z-20 rounded-full bg-card/95 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground'>
-                  live preview
-                </span>
               </div>
             </div>
             
@@ -122,14 +143,21 @@ export default function WebsitePage ({ page, viewer }: WebsitePageProps) {
                     <Button
                       type='button'
                       size='lg'
-                      onClick={() => setSaved(current => !current)}
+                      onClick={() => {
+                        if (saved) {
+                          setShowRemoveConfirmation(true)
+                        } else {
+                          void updateBookmark(true)
+                        }
+                      }}
                       aria-label={
                         saved ? 'Remove from saved folios' : 'Save folio'
                       }
                       aria-pressed={saved}
+                      disabled={isUpdatingBookmark || !viewer}
                       className={
                         saved
-                          ? 'border-primary text-primary rounded-sm'
+                          ? 'py-1 rounded-sm'
                           : 'rounded-sm py-1'
                       }
                     >
@@ -142,14 +170,13 @@ export default function WebsitePage ({ page, viewer }: WebsitePageProps) {
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-1 items-start">
+                <div className='flex flex-col gap-1 items-start'>
                   <h1 className='break-words font-display text-3xl font-medium leading-tight sm:text-4xl'>
                     {page.title}
                   </h1>
 
                   <p className='text-sm text-muted-foreground'>{domain}</p>
                 </div>
-
 
                 {page.oneLiner ? (
                   <p className='text-sm leading-6 text-muted-foreground'>
@@ -170,9 +197,13 @@ export default function WebsitePage ({ page, viewer }: WebsitePageProps) {
                   </div>
                 ) : null}
                 <div className='flex flex-wrap items-center gap-2 text-sm text-muted-foreground'>
-                  <span>{page.bookmarked + (saved ? 1 : 0)} saved</span>
+                  <span>{bookmarkCount} saved</span>
                 </div>
-
+                {bookmarkError ? (
+                  <p className='text-xs text-destructive' role='alert'>
+                    {bookmarkError}
+                  </p>
+                ) : null}
               </div>
 
               <Link
@@ -196,9 +227,12 @@ export default function WebsitePage ({ page, viewer }: WebsitePageProps) {
                     @{page.user.xHandle}
                   </span>
                 </span>
-                <ArrowUpRight className='h-4 w-4 shrink-0 group-hover:scale-130 transition-all ease-out' aria-hidden='true' />
+                <ArrowUpRight
+                  className='h-4 w-4 shrink-0 group-hover:scale-130 transition-all ease-out'
+                  aria-hidden='true'
+                />
               </Link>
-            </aside>{' '}
+            </aside>
           </div>
         </motion.section>
       </main>
@@ -231,6 +265,40 @@ export default function WebsitePage ({ page, viewer }: WebsitePageProps) {
             className='min-h-0 flex-1 rounded-md border border-border bg-card'
             referrerPolicy='no-referrer'
           />
+        </div>
+      ) : null}
+      {showRemoveConfirmation ? (
+        <div
+          className='fixed inset-0 z-[110] grid place-items-center bg-black/50 p-5'
+          role='dialog'
+          aria-modal='true'
+          aria-labelledby='remove-bookmark-title'
+        >
+          <div className='w-full max-w-sm rounded-lg border border-border bg-card p-6 shadow-xl'>
+            <h2 id='remove-bookmark-title' className='font-display text-xl'>
+              Remove bookmark?
+            </h2>
+            <p className='mt-3 text-sm leading-6 text-muted-foreground'>
+              This will remove this page from ur bookmark, press Yes to confirm
+            </p>
+            <div className='mt-6 flex justify-end gap-2'>
+              <Button
+                type='button'
+                variant='outline'
+                onClick={() => setShowRemoveConfirmation(false)}
+                disabled={isUpdatingBookmark}
+              >
+                Cancle
+              </Button>
+              <Button
+                type='button'
+                onClick={() => void updateBookmark(false)}
+                disabled={isUpdatingBookmark}
+              >
+                Yes
+              </Button>
+            </div>
+          </div>
         </div>
       ) : null}
     </div>
