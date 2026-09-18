@@ -65,7 +65,6 @@ export default function PortfolioTile ({
             hasPreviewError={hasPreviewError}
             setHasPreviewError={setHasPreviewError}
             domain={domain}
-            isAuthenticated={isAuthenticated ?? false}
           />
         </Link>
       ) : (
@@ -85,7 +84,6 @@ export default function PortfolioTile ({
             hasPreviewError={hasPreviewError}
             setHasPreviewError={setHasPreviewError}
             domain={domain}
-            isAuthenticated={isAuthenticated ?? false}
           />
         </a>
       )}
@@ -158,7 +156,10 @@ function PortfolioTileContent ({
         ) : (
           <PreviewFallback />
         )}
-        <span className='pointer-events-none absolute inset-x-0 bottom-0 translate-y-2 bg-gradient-to-t from-black/80 to-transparent px-4 pb-4 pt-10 text-sm font-medium text-white opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100'>
+        <span className='absolute left-2 top-1 z-50 rounded-md border border-border bg-background/85 px-2 py-1 font-mono text-[10px] font-semibold text-muted-foreground transition-colors duration-200 group-hover:border-primary group-hover:text-primary'>
+          {portfolio.elo ?? 0} ELO
+        </span>
+        <span className='pointer-events-none absolute inset-x-0 bottom-0 translate-y-2 bg-gradient-to-t from-black/80 to-transparent px-2 pb-4 pt-10 text-sm font-medium text-white opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100'>
           {domain}
         </span>
       </div>
