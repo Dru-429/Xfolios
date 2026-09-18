@@ -61,7 +61,7 @@ export default function GameRound ({
         roundResult={roundResult}
         onChoose={onChooseWinner}
       />
-      <p className='text-sm w-fit text-primary  right-0 '>
+    <p className='text-sm w-fit text-primary absolute  right-10 bottom-10 '>
         {roundResult
           ? `${roundResult.ratingChange > 0 ? '+' : '-'}${Math.abs(
               roundResult.ratingChange
