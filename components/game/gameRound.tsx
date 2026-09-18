@@ -1,9 +1,6 @@
-import { motion } from 'motion/react'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
-
 import { Button } from '@/components/ui/button'
-
 import GameCards from './gameCards'
 import type { Bracket, GamePortfolio, RoundResult } from './gameTypes'
 
@@ -61,14 +58,13 @@ export default function GameRound ({
         roundResult={roundResult}
         onChoose={onChooseWinner}
       />
-    <p className='text-sm w-fit text-primary absolute  right-10 bottom-10 '>
+      <p className='text-sm w-fit text-primary absolute  right-10 bottom-10 '>
         {roundResult
           ? `${roundResult.ratingChange > 0 ? '+' : '-'}${Math.abs(
               roundResult.ratingChange
             )} Elo · ${roundResult.eloAfter} total`
           : 'Choose the folio you would rather visit.'}
       </p>
-
     </main>
   )
 }
