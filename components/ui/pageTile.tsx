@@ -1,13 +1,12 @@
-"use client"
+'use client'
 
-import { motion } from "motion/react";
-import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
+import { motion } from 'motion/react'
+import { type Dispatch, type SetStateAction, useEffect, useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { ArrowUpRight, Bookmark, Star } from "lucide-react";
-import Image from "next/image";
+import { ArrowUpRight, Bookmark, Star } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { setBookmark } from '@/app/page/[pageId]/actions'
-
 
 type Portfolio = {
   'sl.no.': number
@@ -31,7 +30,9 @@ export default function PortfolioTile ({
   isAuthenticated?: boolean
 }) {
   const [hasPreviewError, setHasPreviewError] = useState(false)
-  const [isBookmarked, setIsBookmarked] = useState(portfolio.bookmarked ?? false)
+  const [isBookmarked, setIsBookmarked] = useState(
+    portfolio.bookmarked ?? false
+  )
   const [isUpdatingBookmark, setIsUpdatingBookmark] = useState(false)
   const [rawName, handle] = portfolio.Username.split(' - ')
   const name = rawName ?? portfolio.Username
@@ -88,7 +89,7 @@ export default function PortfolioTile ({
           />
         </a>
       )}
-      
+
       {portfolio.pageId ? (
         <button
           type='button'
@@ -105,6 +106,7 @@ export default function PortfolioTile ({
             }
             setIsUpdatingBookmark(true)
             try {
+              window.location.href = `/page/${portfolio.pageId}`
               const result = await setBookmark(portfolio.pageId!, !isBookmarked)
               setIsBookmarked(result.saved)
             } finally {
@@ -112,12 +114,13 @@ export default function PortfolioTile ({
             }
           }}
         >
-          <Bookmark className={isBookmarked ? 'fill-current' : ''} aria-hidden='true' />
+          <Bookmark
+            className={isBookmarked ? 'fill-current' : ''}
+            aria-hidden='true'
+          />
         </button>
       ) : null}
-      <div className='truncate tracking-wider border-t border-border/70 px-3 pb-3 font-mono text-[12px] text-primary/90 sm:px-4'>
-        
-      </div>
+      <div className='truncate tracking-wider border-t border-border/70 px-3 pb-3 font-mono text-[12px] text-primary/90 sm:px-4'></div>
     </motion.article>
   )
 }
@@ -129,8 +132,8 @@ function PortfolioTileContent ({
   initials,
   portfolioUrl,
   hasPreviewError,
-  setHasPreviewError
-  ,domain
+  setHasPreviewError,
+  domain
 }: {
   portfolio: Portfolio
   name: string
@@ -143,53 +146,50 @@ function PortfolioTileContent ({
 }) {
   return (
     <>
-        <div
-          className={`relative aspect-[1.48] overflow-hidden border-b border-border rounded-t-md `}
-        >
-          {!hasPreviewError ? (
-            <PortfolioPreview
-              portfolioUrl={portfolioUrl}
-              name={name}
-              setHasPreviewError={setHasPreviewError}
-            />
-          ) : (
-            <PreviewFallback />
-          )}
-          <span className='pointer-events-none absolute inset-x-0 bottom-0 translate-y-2 bg-gradient-to-t from-black/80 to-transparent px-4 pb-4 pt-10 text-sm font-medium text-white opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100'>
-            {domain}
-          </span>
-
-        </div>
-
-        <div className='flex min-w-0 items-center gap-3 p-3 sm:p-4'>
-          <Avatar className='h-9 w-9 shrink-0 rounded-md border border-border'>
-            <AvatarImage
-              src={portfolio['X image url']}
-              alt={`${name} on X`}
-              loading='lazy'
-            />
-            <AvatarFallback className='rounded-md bg-accent text-xs text-accent-foreground'>
-              {initials}
-            </AvatarFallback>
-          </Avatar>
-          <div className='min-w-0 flex-1'>
-            <p className='truncate text-sm font-medium text-card-foreground'>
-              {name}
-            </p>
-            <p className='truncate text-xs text-muted-foreground'>
-              {handle ?? `@${name.toLowerCase().replaceAll(' ', '')}`}
-            </p>
-          </div>
-          <ArrowUpRight
-            className='h-4 w-4 shrink-0 text-muted-foreground transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary'
-            aria-hidden='true'
+      <div
+        className={`relative aspect-[1.48] overflow-hidden border-b border-border rounded-t-md `}
+      >
+        {!hasPreviewError ? (
+          <PortfolioPreview
+            portfolioUrl={portfolioUrl}
+            name={name}
+            setHasPreviewError={setHasPreviewError}
           />
+        ) : (
+          <PreviewFallback />
+        )}
+        <span className='pointer-events-none absolute inset-x-0 bottom-0 translate-y-2 bg-gradient-to-t from-black/80 to-transparent px-4 pb-4 pt-10 text-sm font-medium text-white opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100'>
+          {domain}
+        </span>
+      </div>
+
+      <div className='flex min-w-0 items-center gap-3 p-3 sm:p-4'>
+        <Avatar className='h-9 w-9 shrink-0 rounded-md border border-border'>
+          <AvatarImage
+            src={portfolio['X image url']}
+            alt={`${name} on X`}
+            loading='lazy'
+          />
+          <AvatarFallback className='rounded-md bg-accent text-xs text-accent-foreground'>
+            {initials}
+          </AvatarFallback>
+        </Avatar>
+        <div className='min-w-0 flex-1'>
+          <p className='truncate text-sm font-medium text-card-foreground'>
+            {name}
+          </p>
+          <p className='truncate text-xs text-muted-foreground'>
+            {handle ?? `@${name.toLowerCase().replaceAll(' ', '')}`}
+          </p>
         </div>
+        <ArrowUpRight
+          className='h-4 w-4 shrink-0 text-muted-foreground transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary'
+          aria-hidden='true'
+        />
+      </div>
     </>
   )
 }
-
-
 
 function PortfolioPreview ({
   portfolioUrl,
@@ -296,7 +296,6 @@ function getPreviewRequestUrl (portfolioUrl: string) {
     return null
   }
 }
-
 
 function getScreenshotUrl (payload: unknown) {
   if (!payload || typeof payload !== 'object') {
