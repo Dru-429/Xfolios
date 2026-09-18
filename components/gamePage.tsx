@@ -59,7 +59,7 @@ export default function GamePage({ user }: { user: GameUser | null }) {
 
   return (
     <div className='min-h-screen bg-background text-foreground'>
-      <Navbar user={user} />
+      {/* <Navbar user={user} /> */}
       {phase === 'intro' ? <GameIntro onStart={startGame} /> : null}
       {phase === 'playing' ? <GameRound round={round} elo={elo} bracket={bracket} pair={pair} roundResult={roundResult} onChooseWinner={chooseWinner} onNext={advanceRound} /> : null}
       {phase === 'results' ? <GameResults elo={elo} results={results} onRestart={startGame} /> : null}
