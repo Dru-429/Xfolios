@@ -55,11 +55,21 @@ export default function GamePage({
   }
 
   function chooseWinner(winner: (typeof folios)[number]) {
-    if (roundResult || pair.length < 2) return
+    if (pair.length < 2) return
     const first = pair[0]
     const second = pair[1]
     if (!first || !second) return
     const loser = first.id === winner.id ? second : first
+
+    if (roundResult) {
+      if (roundResult.winner.id === winner.id) return
+
+      const nextResult = { ...roundResult, winner, loser }
+      setResults(current => [...current.slice(0, -1), nextResult])
+      setRoundResult(nextResult)
+      return
+    }
+
     const expected = 1 / (1 + 10 ** ((opponentElo - elo) / 400))
     const ratingChange = Math.max(1, Math.round(K_FACTOR * (1 - expected)))
     const nextResult = { winner, loser, opponentElo, ratingChange, eloAfter: elo + ratingChange }
