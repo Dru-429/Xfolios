@@ -6,6 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import type { GamePortfolio, RoundResult } from './gameTypes'
+import { motion } from 'motion/react'
+
 
 export default function GameCards({
   pair,
@@ -50,16 +52,16 @@ export default function GameCards({
                 <div className='overflow-hidden rounded-t-xl border border-foreground/20 bg-foreground/4 p-2 shadow-sm transition-transform duration-500 group-hover:-translate-y-0.5 '>
                   <div className='grid h-8 grid-cols-[1fr_minmax(0,2fr)_1fr] items-center gap-2 border-b border-border px-1 pb-2 sm:h-10'>
                     <span className='flex items-center gap-1.5' aria-hidden='true'>
-                      <span className='h-3 w-3 rounded-full border border-destructive/80 sm:h-4 sm:w-4' />
-                      <span className='h-3 w-3 rounded-full border border-primary/80 sm:h-4 sm:w-4' />
-                      <span className='h-3 w-3 rounded-full border border-muted-foreground/60 sm:h-4 sm:w-4' />
+                      <span className='h-3 w-3 rounded-full bg-[#F78463] sm:h-4 sm:w-4' />
+                      <span className='h-3 w-3 rounded-full bg-[#F0E34D] sm:h-4 sm:w-4' />
+                      <span className='h-3 w-3 rounded-full bg-[#84F165] sm:h-4 sm:w-4' />
                     </span>
 
                     <span className='flex min-w-0 items-center rounded-md border border-border bg-background pl-2 text-left text-muted-foreground shadow-xs'>
                       <span className='min-w-0 flex-1 truncate font-mono text-[10px] sm:text-[11px]'>
                         {folio.domain}
                       </span>
-                      <span
+                      <motion.span
                         role='button'
                         tabIndex={0}
                         aria-label={`Reload ${folio.domain}`}
@@ -78,9 +80,14 @@ export default function GameCards({
                           }
                         }}
                       >
-                        <RefreshCw className='h-3.5 w-3.5' aria-hidden='true' />
-                      </span>
-                    </span>
+                        <motion.span
+                          className='inline-flex items-center justify-center'
+                          animate={{ rotate: (reloads[folio.id] ?? 0) * 360 }}
+                          transition={{ duration: 0.5, ease: 'easeInOut' }}
+                        >
+                          <RefreshCw className='h-3.5 w-3.5' aria-hidden='true' />
+                        </motion.span>
+                      </motion.span>                    </span>
 
                     <span className='flex justify-end'>
                       {folio.pageId ? (
