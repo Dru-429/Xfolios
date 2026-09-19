@@ -1,14 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { RotateCcw } from 'lucide-react'
+import { ArrowLeft, RotateCcw } from 'lucide-react'
 import { motion } from 'motion/react'
-
+import { Navbar } from '@/components/ui/Navbar'
 import PortfolioTile from '@/components/ui/pageTile'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 import type { GamePortfolio, RoundResult } from './gameTypes'
+import Link from 'next/link';
 
 type ResultView = 'picked' | 'skipped'
 
@@ -31,6 +32,15 @@ export default function GameResults ({
 
   return (
     <main className='mx-auto min-h-screen w-full max-w-[1500px] px-4 py-8 sm:px-8 sm:py-12 lg:px-12'>
+      <Link
+        href='/'
+        className='mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground'
+      >
+        <div className=' inline-flex items-center gap-2 text-sm'>
+          <ArrowLeft className='h-4 w-4' aria-hidden='true' />
+          All folios
+        </div>
+      </Link>
       <motion.section
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -39,7 +49,7 @@ export default function GameResults ({
       >
         <div className=' border-primary/80 pb-5'>
           <p className='font-mono text-[11px] uppercase tracking-[0.18em] text-primary'>
-            Game complete · {results.length} rounds 
+            Game complete · {results.length} rounds
           </p>
 
           <div className='flex flex-col justify-between gap-6 border-b border-border pb-8 sm:flex-row sm:items-end'>
@@ -51,7 +61,7 @@ export default function GameResults ({
           </div>
         </div>
 
-        <div className='flex flex-col items-center justify-between gap-4 py-5 sm:flex-row'>
+        <div className='border-b-o border-border flex flex-col items-center justify-between gap-4 py-5 sm:flex-row'>
           <div className='hidden sm:block sm:w-32' aria-hidden='true' />
           <div
             className='flex rounded-lg border-2 border-primary'
@@ -90,7 +100,7 @@ export default function GameResults ({
             type='button'
             variant='outline'
             onClick={onRestart}
-            className='rounded-xl border-primary px-5 text-primary hover:bg-primary hover:text-primary-foreground sm:w-32'
+            className='rounded-md border-primary px-5 text-primary hover:bg-primary hover:text-primary-foreground sm:w-32'
           >
             <RotateCcw aria-hidden='true' /> Play again
           </Button>
@@ -104,10 +114,7 @@ export default function GameResults ({
             <span>{portfolios.length} shown</span>
           </div>
 
-          <div
-            key={view}
-            className='grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
-          >
+          <div key={view} className='grid gap-3 sm:grid-cols-2 lg:grid-cols-3'>
             {portfolios.map(({ folio, elo: portfolioElo }, index) => (
               <PortfolioTile
                 key={`${view}-${folio.id}-${index}`}
