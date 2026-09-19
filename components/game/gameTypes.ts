@@ -1,5 +1,6 @@
 export type GamePortfolio = {
   id: number
+  pageId?: string
   name: string
   handle: string
   avatar: string
