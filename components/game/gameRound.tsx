@@ -47,7 +47,7 @@ export default function GameRound ({
             type='button'
             onClick={onNext}
             disabled={!roundResult}
-            className='rounded-full px-5'
+            className='rounded-md px-5'
           >
             {round === 10 ? 'See results' : 'Next'}{' '}
             <ArrowRight aria-hidden='true' />
