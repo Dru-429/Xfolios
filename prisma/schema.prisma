@@ -9,7 +9,7 @@ datasource db {
 
 model User {
   id         String     @id @default(uuid()) @db.Uuid
-  xId        String     @unique @db.VarChar(64)
+  xId        String?     @unique @db.VarChar(64)
   xUsername  String     @db.VarChar(255)
   xHandle    String     @unique @db.VarChar(255)
   xAvatar    String?    @db.Text
@@ -30,7 +30,7 @@ model Page {
   coverUrl        String?    @db.Text
   title           String     @db.VarChar(255)
   oneLiner        String?    @db.VarChar(500)
-  elo             Int        
+  elo             Int        @default(1000)
   bookmarked      Int        @default(0)
   tags            String[]
   createdAt       DateTime   @default(now())
