@@ -92,7 +92,7 @@ export default function GamePage({
     <div className='min-h-screen bg-background text-foreground'>
       {phase === 'intro' ? <GameIntro onStart={startGame} /> : null}
       {phase === 'playing' ? <GameRound round={round} elo={elo} bracket={bracket} pair={pair} roundResult={roundResult} onChooseWinner={chooseWinner} onNext={advanceRound} isAuthenticated={Boolean(user)} /> : null}
-      {phase === 'results' ? <GameResults elo={elo} results={results} onRestart={startGame} /> : null}
+      {phase === 'results' ? <GameResults elo={elo} results={results} onRestart={startGame} isAuthenticated={Boolean(user)} /> : null}
     </div>
   )
 }
