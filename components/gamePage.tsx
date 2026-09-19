@@ -2,17 +2,38 @@
 
 import { useMemo, useState } from 'react'
 
-import { Navbar } from '@/components/ui/Navbar'
-
 import { FALLBACK_BRACKET, folios, getBracket, getOpponentElo, K_FACTOR, ROUND_COUNT, shuffle } from './game/gameData'
 import GameIntro from './game/gameIntro'
 import GameResults from './game/gameResult'
 import GameRound from './game/gameRound'
-import type { GameUser, RoundResult } from './game/gameTypes'
+import type { GamePortfolio, GameUser, RoundResult } from './game/gameTypes'
 
-export default function GamePage({ user }: { user: GameUser | null }) {
+type PortfolioPage = {
+  id: string
+  websiteUrl: string
+  bookmarked: boolean
+}
+
+export default function GamePage({
+  user,
+  portfolioPages
+}: {
+  user: GameUser | null
+  portfolioPages: PortfolioPage[]
+}) {
+  const gameFolios = useMemo(() => {
+    const pagesByUrl = new Map(portfolioPages.map(page => [page.websiteUrl, page]))
+
+    return folios.map(folio => {
+      const page = pagesByUrl.get(folio.websiteUrl)
+
+      return page
+        ? { ...folio, pageId: page.id, bookmarked: page.bookmarked }
+        : folio
+    })
+  }, [portfolioPages])
   const [phase, setPhase] = useState<'intro' | 'playing' | 'results'>('intro')
-  const [deck, setDeck] = useState(folios)
+  const [deck, setDeck] = useState<GamePortfolio[]>(gameFolios)
   const [round, setRound] = useState(1)
   const [elo, setElo] = useState(1000)
   const [results, setResults] = useState<RoundResult[]>([])
@@ -25,7 +46,7 @@ export default function GamePage({ user }: { user: GameUser | null }) {
   }, [deck, round])
 
   function startGame() {
-    setDeck(shuffle(folios))
+    setDeck(shuffle(gameFolios))
     setRound(1)
     setElo(1000)
     setResults([])
@@ -59,9 +80,8 @@ export default function GamePage({ user }: { user: GameUser | null }) {
 
   return (
     <div className='min-h-screen bg-background text-foreground'>
-      {/* <Navbar user={user} /> */}
       {phase === 'intro' ? <GameIntro onStart={startGame} /> : null}
-      {phase === 'playing' ? <GameRound round={round} elo={elo} bracket={bracket} pair={pair} roundResult={roundResult} onChooseWinner={chooseWinner} onNext={advanceRound} /> : null}
+      {phase === 'playing' ? <GameRound round={round} elo={elo} bracket={bracket} pair={pair} roundResult={roundResult} onChooseWinner={chooseWinner} onNext={advanceRound} isAuthenticated={Boolean(user)} /> : null}
       {phase === 'results' ? <GameResults elo={elo} results={results} onRestart={startGame} /> : null}
     </div>
   )

@@ -1,6 +1,7 @@
 export type GamePortfolio = {
   id: number
   pageId?: string
+  bookmarked?: boolean
   name: string
   handle: string
   avatar: string

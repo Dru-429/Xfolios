@@ -9,7 +9,8 @@ export default function GameRound ({
   pair,
   roundResult,
   onChooseWinner,
-  onNext
+  onNext,
+  isAuthenticated
 }: {
   round: number
   elo: number
@@ -18,6 +19,7 @@ export default function GameRound ({
   roundResult: RoundResult | null
   onChooseWinner: (folio: GamePortfolio) => void
   onNext: () => void
+  isAuthenticated: boolean
 }) {
   return (
     <main className=' relative w-full max-h-scree px-5 pb-1 sm:pb-10 pt-7 sm:px-8 sm:pt-4 lg:px-5'>
@@ -57,6 +59,7 @@ export default function GameRound ({
         pair={pair}
         roundResult={roundResult}
         onChoose={onChooseWinner}
+        isAuthenticated={isAuthenticated}
       />
       <p className='text-sm w-fit text-primary absolute  right-10 bottom-10 '>
         {roundResult
