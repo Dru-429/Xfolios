@@ -2,38 +2,21 @@
 
 import { useMemo, useState } from 'react'
 
-import { FALLBACK_BRACKET, folios, getBracket, getOpponentElo, K_FACTOR, ROUND_COUNT, shuffle } from './game/gameData'
+import { FALLBACK_BRACKET, getBracket, getOpponentElo, K_FACTOR, ROUND_COUNT, shuffle } from './game/gameData'
 import GameIntro from './game/gameIntro'
 import GameResults from './game/gameResult'
 import GameRound from './game/gameRound'
 import type { GamePortfolio, GameUser, RoundResult } from './game/gameTypes'
 
-type PortfolioPage = {
-  id: string
-  websiteUrl: string
-  bookmarked: boolean
-}
-
 export default function GamePage({
   user,
-  portfolioPages
+  folios
 }: {
   user: GameUser | null
-  portfolioPages: PortfolioPage[]
+  folios: GamePortfolio[]
 }) {
-  const gameFolios = useMemo(() => {
-    const pagesByUrl = new Map(portfolioPages.map(page => [page.websiteUrl, page]))
-
-    return folios.map(folio => {
-      const page = pagesByUrl.get(folio.websiteUrl)
-
-      return page
-        ? { ...folio, pageId: page.id, bookmarked: page.bookmarked }
-        : folio
-    })
-  }, [portfolioPages])
   const [phase, setPhase] = useState<'intro' | 'playing' | 'results'>('intro')
-  const [deck, setDeck] = useState<GamePortfolio[]>(gameFolios)
+  const [deck, setDeck] = useState<GamePortfolio[]>(folios)
   const [round, setRound] = useState(1)
   const [elo, setElo] = useState(1000)
   const [results, setResults] = useState<RoundResult[]>([])
@@ -46,7 +29,7 @@ export default function GamePage({
   }, [deck, round])
 
   function startGame() {
-    setDeck(shuffle(gameFolios))
+    setDeck(shuffle(folios))
     setRound(1)
     setElo(1000)
     setResults([])
@@ -54,7 +37,7 @@ export default function GamePage({
     setPhase('playing')
   }
 
-  function chooseWinner(winner: (typeof folios)[number]) {
+  function chooseWinner(winner: GamePortfolio) {
     if (pair.length < 2) return
     const first = pair[0]
     const second = pair[1]

@@ -1,15 +1,8 @@
 'use client'
 
 import { AnimatePresence, motion } from 'motion/react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import {
-  ArrowUpRight,
-  ChevronLeft,
-  ChevronRight
-} from 'lucide-react'
-import Image from 'next/image'
-import {
-  type Dispatch,
-  type SetStateAction,
   useEffect,
   useMemo,
   useState,
@@ -17,11 +10,10 @@ import {
 } from 'react'
 
 import { Button } from '@/components/ui/button'
-import portfolios from '@/data/portfolios.json'
 import { Navbar } from './ui/Navbar'
 import Hero from './ui/Hero'
-import PortfolioTile from './ui/pageTile';
-import Footer from './ui/footer';
+import PortfolioTile, { type PortfolioTileData } from './ui/pageTile'
+import Footer from './ui/footer'
 
 type LandingUser = {
   name?: string | null
@@ -29,15 +21,6 @@ type LandingUser = {
   xHandle?: string | null
 }
 
-type Portfolio = {
-  'sl.no.': number
-  Username: string
-  'X url': string
-  'X image url': string
-  'portfolio url': string
-}
-
-const records = portfolios as Portfolio[]
 const PAGE_SIZE = 20
 const THEME_STORAGE_KEY = 'x-folios-theme'
 const THEME_EVENT = 'x-folios-theme-change'
@@ -70,7 +53,13 @@ function subscribeToThemeChange (onStoreChange: () => void) {
   }
 }
 
-export default function Landing ({ user }: { user: LandingUser | null }) {
+export default function Landing ({
+  user,
+  records
+}: {
+  user: LandingUser | null
+  records: PortfolioTileData[]
+}) {
   const [page, setPage] = useState(1)
   const isDark = useSyncExternalStore(
     subscribeToThemeChange,
@@ -85,7 +74,7 @@ export default function Landing ({ user }: { user: LandingUser | null }) {
 
   const currentRecords = useMemo(
     () => records.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
-    [page]
+    [page, records]
   )
 
   const changePage = (nextPage: number) => {
@@ -132,6 +121,7 @@ export default function Landing ({ user }: { user: LandingUser | null }) {
                 key={portfolio['sl.no.']}
                 portfolio={portfolio}
                 index={index}
+                isAuthenticated={Boolean(user)}
               />
             ))}
           </motion.div>
@@ -180,5 +170,3 @@ export default function Landing ({ user }: { user: LandingUser | null }) {
     </div>
   )
 }
-
-

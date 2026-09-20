@@ -26,7 +26,7 @@ export default function GameCards ({
   isAuthenticated: boolean
 }) {
   const router = useRouter()
-  const [reloads, setReloads] = useState<Record<number, number>>({})
+  const [reloads, setReloads] = useState<Record<string, number>>({})
   const [bookmarks, setBookmarks] = useState<Record<string, boolean>>({})
   const [updatingBookmark, setUpdatingBookmark] = useState<string | null>(null)
 

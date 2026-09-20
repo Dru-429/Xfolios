@@ -8,8 +8,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { setBookmark } from '@/app/page/[pageId]/actions'
 
-type Portfolio = {
-  'sl.no.': number
+export type PortfolioTileData = {
+  'sl.no.': number | string
   pageId?: string
   Username: string
   'X url': string
@@ -25,7 +25,7 @@ export default function PortfolioTile ({
   index,
   isAuthenticated
 }: {
-  portfolio: Portfolio
+  portfolio: PortfolioTileData
   index: number
   isAuthenticated?: boolean
 }) {
@@ -133,7 +133,7 @@ function PortfolioTileContent ({
   setHasPreviewError,
   domain
 }: {
-  portfolio: Portfolio
+  portfolio: PortfolioTileData
   name: string
   handle?: string
   initials: string
