@@ -55,7 +55,7 @@ const twitter = Twitter({
       email: null,
       image: data.profile_image_url ?? null,
       dbId: dbUser.id,
-      xId: dbUser.xId,
+      xId: data.id,
       xHandle: dbUser.xHandle,
     }
   },
