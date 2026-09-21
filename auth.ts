@@ -50,7 +50,7 @@ const twitter = Twitter({
     }
 
     return {
-      id: data.id,
+      id: dbUser.id,
       name: data.name,
       email: null,
       image: data.profile_image_url ?? null,

@@ -16,6 +16,7 @@ export default async function PlayPage() {
       orderBy: [{ elo: 'desc' }, { createdAt: 'desc' }],
       select: {
         id: true,
+        elo: true,
         websiteUrl: true,
         user: {
           select: {
@@ -38,6 +39,7 @@ export default async function PlayPage() {
     id: page.id,
     pageId: page.id,
     bookmarked: bookmarkedPageIds.has(page.id),
+    elo: page.elo,
     name: page.user.xUsername,
     handle: page.user.xHandle,
     avatar: page.user.xAvatar ?? '',

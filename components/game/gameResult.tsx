@@ -3,13 +3,12 @@
 import { useState } from 'react'
 import { ArrowLeft, RotateCcw } from 'lucide-react'
 import { motion } from 'motion/react'
-import { Navbar } from '@/components/ui/Navbar'
 import PortfolioTile from '@/components/ui/pageTile'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 import type { GamePortfolio, RoundResult } from './gameTypes'
-import Link from 'next/link';
+import Link from 'next/link'
 
 type ResultView = 'picked' | 'skipped'
 
@@ -18,7 +17,6 @@ export default function GameResults ({
   onRestart,
   isAuthenticated
 }: {
-  elo: number
   results: RoundResult[]
   onRestart: () => void
   isAuthenticated: boolean
@@ -26,7 +24,7 @@ export default function GameResults ({
   const [view, setView] = useState<ResultView>('picked')
   const portfolios = results.map(result => ({
     folio: view === 'picked' ? result.winner : result.loser,
-    elo: view === 'picked' ? result.eloAfter : result.opponentElo
+    elo: view === 'picked' ? result.winnerEloAfter : result.loserEloAfter
   }))
 
   return (
@@ -51,10 +49,16 @@ export default function GameResults ({
             Game complete · {results.length} rounds
           </p>
 
+          {!isAuthenticated ? (
+            <p className='mt-3 text-sm text-muted-foreground'>
+              This was a local game. Sign in before playing to save Elo and match history.
+            </p>
+          ) : null}
+
           <div className='flex flex-col justify-between gap-6 border-b border-border pb-8 sm:flex-row sm:items-end'>
             <div>
               <h1 className='my-4 font-display text-5xl font-normal tracking-[-0.06em] sm:text-7xl'>
-                Here's your folio list.
+                Here&apos;s your folio list.
               </h1>
             </div>
           </div>
