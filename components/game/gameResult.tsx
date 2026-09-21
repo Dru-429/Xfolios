@@ -14,7 +14,6 @@ import Link from 'next/link';
 type ResultView = 'picked' | 'skipped'
 
 export default function GameResults ({
-  elo,
   results,
   onRestart,
   isAuthenticated
@@ -31,7 +30,7 @@ export default function GameResults ({
   }))
 
   return (
-    <main className='mx-auto min-h-screen w-full max-w-[1500px] px-4 py-8 sm:px-8 sm:py-12 lg:px-12'>
+    <main className='mx-auto min-h-screen w-full max-w-375 px-4 py-8 sm:px-8 sm:py-12 lg:px-12'>
       <Link
         href='/'
         className='mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground'

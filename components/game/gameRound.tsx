@@ -49,7 +49,7 @@ export default function GameRound ({
             disabled={!roundResult}
             className='rounded-md px-5'
           >
-            {round === 10 ? 'See results' : 'Next'}{' '}
+            {round === 5 ? 'See results' : 'Next'}{' '}
             <ArrowRight aria-hidden='true' />
           </Button>
         </div>

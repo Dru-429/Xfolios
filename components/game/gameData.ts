@@ -3,13 +3,13 @@ import type { Bracket, GamePortfolio } from './gameTypes'
 const BRACKETS: Bracket[] = [
   { min: 900, max: 1000 },
   { min: 1000, max: 1100 },
+  { min: 1100, max: 1200 },
   { min: 1200, max: 1300 },
   { min: 1300, max: 1400 },
-  { min: 1400, max: 1500 }
 ]
 
-export const ROUND_COUNT = 10
-export const K_FACTOR = 32
+export const ROUND_COUNT = 5;
+export const K_FACTOR = 32;
 export const FALLBACK_BRACKET: Bracket = { min: 900, max: 1000 }
 
 export function getBracket(round: number) {
