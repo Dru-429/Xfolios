@@ -2,13 +2,20 @@
 
 import { useMemo, useState } from 'react'
 
-import { FALLBACK_BRACKET, getBracket, getOpponentElo, K_FACTOR, ROUND_COUNT, shuffle } from './game/gameData'
+import {
+  FALLBACK_BRACKET,
+  getBracket,
+  getOpponentElo,
+  K_FACTOR,
+  ROUND_COUNT,
+  shuffle
+} from './game/gameData'
 import GameIntro from './game/gameIntro'
 import GameResults from './game/gameResult'
 import GameRound from './game/gameRound'
 import type { GamePortfolio, GameUser, RoundResult } from './game/gameTypes'
 
-export default function GamePage({
+export default function GamePage ({
   user,
   folios
 }: {
@@ -25,10 +32,13 @@ export default function GamePage({
   const opponentElo = getOpponentElo(bracket, round)
   const pair = useMemo(() => {
     const firstIndex = ((round - 1) * 2) % Math.max(deck.length, 1)
-    return [deck[firstIndex], deck[(firstIndex + 1) % Math.max(deck.length, 1)]].filter(Boolean)
+    return [
+      deck[firstIndex],
+      deck[(firstIndex + 1) % Math.max(deck.length, 1)]
+    ].filter(Boolean)
   }, [deck, round])
 
-  function startGame() {
+  function startGame () {
     setDeck(shuffle(folios))
     setRound(1)
     setElo(1000)
@@ -37,7 +47,7 @@ export default function GamePage({
     setPhase('playing')
   }
 
-  function chooseWinner(winner: GamePortfolio) {
+  function chooseWinner (winner: GamePortfolio) {
     if (pair.length < 2) return
     const first = pair[0]
     const second = pair[1]
@@ -55,13 +65,19 @@ export default function GamePage({
 
     const expected = 1 / (1 + 10 ** ((opponentElo - elo) / 400))
     const ratingChange = Math.max(1, Math.round(K_FACTOR * (1 - expected)))
-    const nextResult = { winner, loser, opponentElo, ratingChange, eloAfter: elo + ratingChange }
+    const nextResult = {
+      winner,
+      loser,
+      opponentElo,
+      ratingChange,
+      eloAfter: elo + ratingChange
+    }
     setElo(nextResult.eloAfter)
     setResults(current => [...current, nextResult])
     setRoundResult(nextResult)
   }
 
-  function advanceRound() {
+  function advanceRound () {
     if (!roundResult) return
     if (round === ROUND_COUNT) {
       setPhase('results')
@@ -74,8 +90,26 @@ export default function GamePage({
   return (
     <div className='min-h-screen bg-background text-foreground'>
       {phase === 'intro' ? <GameIntro onStart={startGame} /> : null}
-      {phase === 'playing' ? <GameRound round={round} elo={elo} bracket={bracket} pair={pair} roundResult={roundResult} onChooseWinner={chooseWinner} onNext={advanceRound} isAuthenticated={Boolean(user)} /> : null}
-      {phase === 'results' ? <GameResults elo={elo} results={results} onRestart={startGame} isAuthenticated={Boolean(user)} /> : null}
+      {phase === 'playing' ? (
+        <GameRound
+          round={round}
+          elo={elo}
+          bracket={bracket}
+          pair={pair}
+          roundResult={roundResult}
+          onChooseWinner={chooseWinner}
+          onNext={advanceRound}
+          isAuthenticated={Boolean(user)}
+        />
+      ) : null}
+      {phase === 'results' ? (
+        <GameResults
+          elo={elo}
+          results={results}
+          onRestart={startGame}
+          isAuthenticated={Boolean(user)}
+        />
+      ) : null}
     </div>
   )
 }
