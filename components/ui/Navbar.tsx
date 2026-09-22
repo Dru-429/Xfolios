@@ -60,7 +60,7 @@ export function ThemeToggle ({
       {/* Sliding orange indicator */}
       <span
         className={cn(
-          'absolute top- flex h-8 w-7 items-center justify-center',
+          'absolute flex h-8 w-7 items-center justify-center',
           'bg-primary text-primary-foreground ',
           'transition-transform duration-300 ease-out',
           isDark ? 'translate-x-4 rounded-r-md' : '-translate-x-4 rounded-l-md'

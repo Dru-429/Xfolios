@@ -19,7 +19,7 @@ export default function ProfileLink ({ user }: ProfileLinkProps) {
     <Link
       href={href}
       className={cn(
-        'inline-flex h-9 w-9 shrink-0 items-center justify-center',
+        'inline-flex h-9 w-fit shrink-0 items-center justify-center',
         'rounded-md border border-border bg-card ',
         'text-foreground transition-all duration-200',
         'hover:border-foreground/40'
@@ -34,7 +34,7 @@ export default function ProfileLink ({ user }: ProfileLinkProps) {
           className='rounded-sm'
         />
       ) : (
-        <span>Sign in</span>
+        <span className="px-2">Sign in</span>
       )}
     </Link>
   )
