@@ -51,8 +51,8 @@ export function ThemeToggle ({
       onClick={toggleTheme}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       className={cn(
-        'relative flex h-9 w-18 items-center rounded-md',
-        'border border-border bg-card p-1',
+        'relative flex h-9 w-16 items-center justify-center rounded-md',
+        'border border-border bg-card p-',
         'transition-colors duration-200',
         'hover:border-foreground/40'
       )}
@@ -60,10 +60,10 @@ export function ThemeToggle ({
       {/* Sliding orange indicator */}
       <span
         className={cn(
-          'absolute top-1 flex h-7 w-8 items-center justify-center rounded-lg',
-          'bg-primary text-primary-foreground',
+          'absolute top- flex h-8 w-7 items-center justify-center',
+          'bg-primary text-primary-foreground ',
           'transition-transform duration-300 ease-out',
-          isDark ? 'translate-x-7' : 'translate-x-0'
+          isDark ? 'translate-x-4 rounded-r-md' : '-translate-x-4 rounded-l-md'
         )}
       >
         {isDark ? (
