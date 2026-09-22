@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 import { useTheme } from '@/hooks/useTheme'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import ProfileLink from './ProfileLink';
+import ProfileLink from './ProfileLink'
 
 type NavbarUser = {
   name?: string | null
@@ -52,7 +52,7 @@ export function ThemeToggle ({
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       className={cn(
         'relative flex h-9 w-16 items-center justify-center rounded-md',
-        'border border-border bg-card p-',
+        'border border-border bg-card',
         'transition-colors duration-200',
         'hover:border-foreground/40'
       )}
@@ -97,7 +97,9 @@ export function ThemeToggle ({
 
 export function Navbar ({ user }: { user: NavbarUser | null }) {
   const { isDark, toggleTheme, mounted } = useTheme()
-
+  const hrefPlay = user?.xHandle ? `/play` : '/signin'
+  const hrefSubmit = user?.xHandle ? `/add` : '/signin'
+  
   return (
     <header className='sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm px-5'>
       <div className='mx-auto flex h-18 w-full items-center justify-between px-6 sm:px-8 lg:px-10'>
@@ -117,7 +119,7 @@ export function Navbar ({ user }: { user: NavbarUser | null }) {
           aria-label='Primary navigation'
         >
           <NavPill
-            to='/play'
+            to={hrefPlay}
             label={
               <span className='flex items-center gap-2'>
                 <Play size={13} fill='currentColor' />
@@ -126,7 +128,7 @@ export function Navbar ({ user }: { user: NavbarUser | null }) {
             }
           />
 
-          <NavPill to='/add' label='Add' primary />
+          <NavPill to={hrefSubmit} label='Add' primary />
 
           {/* Theme */}
           {mounted ? (

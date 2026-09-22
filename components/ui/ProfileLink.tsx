@@ -31,8 +31,8 @@ export default function ProfileLink ({ user }: ProfileLinkProps) {
           alt={user.name ?? 'Profile'}
           width={32}
           height={32}
-          className='rounded-sm'
-        />
+          className='p-[1px] rounded-md'
+        />  
       ) : (
         <span className="px-2">Sign in</span>
       )}
