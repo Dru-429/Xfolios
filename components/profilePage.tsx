@@ -51,7 +51,8 @@ function toPortfolioTile (
     Username: `${profile.name} - @${profile.handle}`,
     'X url': `https://x.com/${profile.handle}`,
     'X image url': profile.avatar ?? '',
-    'portfolio url': page.websiteUrl
+    'portfolio url': page.websiteUrl,
+    'cover url': page.coverUrl
   }
 }
 

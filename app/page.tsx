@@ -10,6 +10,7 @@ export default async function HomePage () {
       select: {
         id: true,
         websiteUrl: true,
+        coverUrl: true,
         elo: true,
         user: {
           select: {
@@ -35,6 +36,7 @@ export default async function HomePage () {
     'X url': `https://x.com/${page.user.xHandle}`,
     'X image url': page.user.xAvatar ?? '',
     'portfolio url': page.websiteUrl,
+    'cover url': page.coverUrl,
     elo: page.elo,
     bookmarked: bookmarkedPageIds.has(page.id)
   }))

@@ -1,11 +1,11 @@
 'use client'
 
 import { motion } from 'motion/react'
-import { type Dispatch, type SetStateAction, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { ArrowUpRight, Bookmark, Star } from 'lucide-react'
-import Image from 'next/image'
+import { ArrowUpRight, Bookmark } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { setBookmark } from '@/app/page/[pageId]/actions'
 
 export type PortfolioTileData = {
@@ -15,6 +15,7 @@ export type PortfolioTileData = {
   'X url': string
   'X image url': string
   'portfolio url': string
+  'cover url'?: string | null
   elo?: number
   bookmarked?: boolean
   isAuthenticated?: boolean
@@ -29,15 +30,13 @@ export default function PortfolioTile ({
   index: number
   isAuthenticated?: boolean
 }) {
-  const [hasPreviewError, setHasPreviewError] = useState(false)
+  const router = useRouter()
   const [isBookmarked, setIsBookmarked] = useState(
     portfolio.bookmarked ?? false
   )
   const [isUpdatingBookmark, setIsUpdatingBookmark] = useState(false)
   const [rawName, handle] = portfolio.Username.split(' - ')
   const name = rawName ?? portfolio.Username
-  const elo = portfolio.elo ?? 0
-  const portfolioUrl = portfolio['portfolio url']
   const domain = portfolio['portfolio url']
     .replace(/^https?:\/\/(www\.)?/, '')
     .replace(/\/$/, '')
@@ -50,74 +49,47 @@ export default function PortfolioTile ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(index * 0.025, 0.3), duration: 0.35 }}
     >
-      {portfolio.pageId ? (
-        <Link
-          href={`/page/${portfolio.pageId}`}
-          className='block'
-          aria-label={`Open ${name}'s portfolio`}
-        >
-          <PortfolioTileContent
-            portfolio={portfolio}
-            name={name}
-            handle={handle}
-            initials={initials}
-            portfolioUrl={portfolioUrl}
-            hasPreviewError={hasPreviewError}
-            setHasPreviewError={setHasPreviewError}
-            domain={domain}
-          />
-        </Link>
-      ) : (
-        <a
-          href={portfolioUrl}
-          target='_blank'
-          rel='noreferrer'
-          className='block'
-          aria-label={`Open ${name}'s portfolio`}
-        >
-          <PortfolioTileContent
-            portfolio={portfolio}
-            name={name}
-            handle={handle}
-            initials={initials}
-            portfolioUrl={portfolioUrl}
-            hasPreviewError={hasPreviewError}
-            setHasPreviewError={setHasPreviewError}
-            domain={domain}
-          />
-        </a>
-      )}
+      <Link
+        href={`/page/${portfolio.pageId}`}
+        className='block'
+        aria-label={`Open ${name}'s portfolio`}
+      >
+        <PortfolioTileContent
+          portfolio={portfolio}
+          name={name}
+          handle={handle}
+          initials={initials}
+          domain={domain}
+        />
+      </Link>
 
-      {portfolio.pageId ? (
-        <button
-          type='button'
-          className='absolute righ-0 top-0 pr-4 z-10 inline-flex h-9 w-full items-center justify-end text-white opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 bg-linear-to-b from-black/80 to-transparent cursor-pointer'
-          aria-label={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
-          aria-pressed={isBookmarked}
-          disabled={isUpdatingBookmark}
-          onClick={async event => {
-            event.preventDefault()
-            event.stopPropagation()
-            if (!isAuthenticated) {
-              window.location.href = `/signin?callbackUrl=/page/${portfolio.pageId}`
-              return
-            }
-            setIsUpdatingBookmark(true)
-            try {
-              window.location.href = `/page/${portfolio.pageId}`
-              const result = await setBookmark(portfolio.pageId!, !isBookmarked)
-              setIsBookmarked(result.saved)
-            } finally {
-              setIsUpdatingBookmark(false)
-            }
-          }}
-        >
-          <Bookmark   
-            className={isBookmarked ? 'fill-current' : ''}
-            aria-hidden='true'
-          />
-        </button>
-      ) : null}
+      <button
+        type='button'
+        className='absolute right-0 top-0 z-10 inline-flex h-9 w-full cursor-pointer items-center justify-end bg-linear-to-b from-black/80 to-transparent pr-4 text-white opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100'
+        aria-label={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
+        aria-pressed={isBookmarked}
+        disabled={isUpdatingBookmark}
+        onClick={async event => {
+          event.preventDefault()
+          event.stopPropagation()
+          if (!isAuthenticated) {
+            router.push(`/signin?callbackUrl=/page/${portfolio.pageId}`)
+            return
+          }
+          setIsUpdatingBookmark(true)
+          try {
+            const result = await setBookmark(portfolio.pageId!, !isBookmarked)
+            setIsBookmarked(result.saved)
+          } finally {
+            setIsUpdatingBookmark(false)
+          }
+        }}
+      >
+        <Bookmark
+          className={isBookmarked ? 'fill-current' : ''}
+          aria-hidden='true'
+        />
+      </button>
       <div className='truncate tracking-wider border-t border-border/70 px-3 pb-3 font-mono text-[12px] text-primary/90 sm:px-4'></div>
     </motion.article>
   )
@@ -128,38 +100,44 @@ function PortfolioTileContent ({
   name,
   handle,
   initials,
-  portfolioUrl,
-  hasPreviewError,
-  setHasPreviewError,
   domain
 }: {
   portfolio: PortfolioTileData
   name: string
   handle?: string
   initials: string
-  portfolioUrl: string
-  hasPreviewError: boolean
-  setHasPreviewError: Dispatch<SetStateAction<boolean>>
   domain: string
 }) {
+  const storedCoverUrl = portfolio['cover url']?.trim()
+  const coverUrl = storedCoverUrl && !isSameImageUrl(
+    storedCoverUrl,
+    portfolio['X image url']
+  )
+    ? storedCoverUrl
+    : ''
+  const previewUrl = coverUrl || (portfolio.pageId
+    ? `/api/pages/${encodeURIComponent(portfolio.pageId)}/preview?v=3`
+    : '')
+
   return (
     <>
       <div
         className={`relative aspect-[1.48] overflow-hidden border-b border-border rounded-t-md `}
       >
-        {!hasPreviewError ? (
-          <PortfolioPreview
-            portfolioUrl={portfolioUrl}
-            name={name}
-            setHasPreviewError={setHasPreviewError}
+        <Avatar className='h-full w-full rounded-none'>
+          <AvatarImage
+            src={previewUrl || undefined}
+            alt={`Preview of ${name}'s website`}
+            className='h-full w-full rounded-none object-cover transition-transform duration-500 group-hover:scale-[1.025]'
           />
-        ) : (
-          <PreviewFallback />
-        )}
+          <AvatarFallback className='rounded-none bg-accent/40'>
+            <PreviewFallback />
+          </AvatarFallback>
+        </Avatar>
         <span className='absolute left-2 top-1 z-50 rounded-md border border-border bg-background/85 px-2 py-1 font-mono text-[10px] font-semibold text-muted-foreground transition-colors duration-200 group-hover:border-primary group-hover:text-primary'>
           {portfolio.elo ?? 0} ELO
         </span>
-        <span className='pointer-events-none absolute inset-x-0 bottom-0 translate-y-2 bg-gradient-to-t from-black/80 to-transparent px-2 pb-4 pt-10 text-sm font-medium text-white opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100'>
+        <span className='pointer-events-none absolute inset-x-0 bottom-0 translate-y-2 bg-linear-to-t from-black/80 to-transparent px-2 pb-4 pt-10 text-sm font-medium text-white opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100'>
           {domain}
         </span>
       </div>
@@ -192,76 +170,6 @@ function PortfolioTileContent ({
   )
 }
 
-function PortfolioPreview ({
-  portfolioUrl,
-  name,
-  setHasPreviewError
-}: {
-  portfolioUrl: string
-  name: string
-  setHasPreviewError: Dispatch<SetStateAction<boolean>>
-}) {
-  const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null)
-
-  useEffect(() => {
-    const previewUrl = getPreviewRequestUrl(portfolioUrl)
-
-    if (!previewUrl) {
-      setHasPreviewError(true)
-      return
-    }
-
-    const requestUrl = previewUrl
-    const controller = new AbortController()
-
-    async function loadPreview () {
-      try {
-        const response = await fetch(requestUrl, { signal: controller.signal })
-
-        if (!response.ok) {
-          throw new Error(`Preview request failed: ${response.status}`)
-        }
-
-        const payload = await response.json()
-        const nextScreenshotUrl = getScreenshotUrl(payload)
-
-        if (!nextScreenshotUrl) {
-          throw new Error('Preview response did not include a screenshot URL')
-        }
-
-        setScreenshotUrl(nextScreenshotUrl)
-      } catch {
-        if (controller.signal.aborted) {
-          return
-        }
-
-        setHasPreviewError(true)
-      }
-    }
-
-    loadPreview()
-
-    return () => {
-      controller.abort()
-    }
-  }, [portfolioUrl, setHasPreviewError])
-
-  if (!screenshotUrl) {
-    return <PreviewFallback />
-  }
-
-  return (
-    <Image
-      src={screenshotUrl}
-      alt={`Preview of ${name}'s website`}
-      fill
-      sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
-      className='object-cover transition-transform duration-500 group-hover:scale-[1.025]'
-      onError={() => setHasPreviewError(true)}
-    />
-  )
-}
-
 function PreviewFallback () {
   return (
     <div className='absolute inset-x-[9%] top-[13%] bottom-[12%] overflow-hidden rounded-[4px] border border-foreground/15 bg-card/80 p-[7%] transition-transform duration-500 group-hover:scale-[1.025]'>
@@ -281,49 +189,20 @@ function PreviewFallback () {
   )
 }
 
-function getPreviewRequestUrl (portfolioUrl: string) {
+function isSameImageUrl (first: string, second: string) {
   try {
-    const params = new URLSearchParams({
-      url: portfolioUrl,
-      screenshot: 'true',
-      meta: 'false',
-      'viewport.isMobile': 'false',
-      'viewport.width': '1200',
-      'viewport.height': '750'
-    })
+    const imageIdentity = (value: string) => {
+      const url = new URL(value)
+      const pathname = decodeURIComponent(url.pathname).replace(
+        /_(?:normal|bigger|mini|400x400)(?=\.[^.]+$)/i,
+        ''
+      )
 
-    return `https://api.microlink.io/?${params.toString()}`
+      return `${url.hostname.toLowerCase()}${pathname}`
+    }
+
+    return imageIdentity(first) === imageIdentity(second)
   } catch {
-    return null
+    return first.trim() === second.trim()
   }
-}
-
-function getScreenshotUrl (payload: unknown) {
-  if (!payload || typeof payload !== 'object') {
-    return null
-  }
-
-  const data =
-    'data' in payload && payload.data && typeof payload.data === 'object'
-      ? payload.data
-      : null
-
-  const screenshot =
-    data &&
-    'screenshot' in data &&
-    data.screenshot &&
-    typeof data.screenshot === 'object'
-      ? data.screenshot
-      : null
-
-  if (
-    screenshot &&
-    'url' in screenshot &&
-    typeof screenshot.url === 'string' &&
-    screenshot.url.length > 0
-  ) {
-    return screenshot.url
-  }
-
-  return null
 }
