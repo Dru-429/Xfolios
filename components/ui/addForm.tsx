@@ -109,7 +109,7 @@ export default function AddForm({ userName }: AddFormProps) {
               required
               className='h-11'
             />
-            <Button type='button' onClick={handleFetch} disabled={isFetching} className='h-11 shrink-0 px-4 sm:px-5'>
+            <Button type='button' onClick={handleFetch} disabled={isFetching} className='h-11 shrink-0 px-4 sm:px-5 rounded-md'>
               {isFetching ? <LoaderCircle className='animate-spin' aria-hidden='true' /> : <Sparkles aria-hidden='true' />}
               <span>{isFetching ? 'Fetching' : 'Fetch'}</span>
             </Button>
@@ -183,9 +183,8 @@ export default function AddForm({ userName }: AddFormProps) {
       </div>
 
       <div className='mt-8 border-t border-border pt-5'>
-        <Button type='submit' className='h-11 w-full rounded-full px-6 sm:w-auto'>
+        <Button type='submit' className='h-11 w-full rounded-md px-6 sm:w-auto'>
           <Check aria-hidden='true' />
-          <Plus aria-hidden='true' />
           Submit folio
         </Button>
         {submitError ? <p className='mt-3 text-xs text-destructive' role='alert'>{submitError}</p> : null}
