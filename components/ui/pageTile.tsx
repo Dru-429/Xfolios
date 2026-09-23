@@ -112,7 +112,7 @@ export default function PortfolioTile ({
             }
           }}
         >
-          <Bookmark
+          <Bookmark   
             className={isBookmarked ? 'fill-current' : ''}
             aria-hidden='true'
           />
