@@ -20,7 +20,7 @@ export default function GameIntro({ onStart }: { onStart: () => void }) {
 					<p className='mt-6 max-w-lg text-base leading-relaxed text-muted-foreground'>
 						Five rounds. Two portfolios at a time. Choose the one you would keep open, climb the Elo ladder, and see your personal shortlist at the end.
 					</p>
-					<Button type='button' onClick={onStart} className='mt-9 rounded-full px-7'>
+					<Button type='button' onClick={onStart} className='mt-9 rounded-md px-7'>
 						Start game <ArrowRight aria-hidden='true' />
 					</Button>
 				</div>
