@@ -38,7 +38,7 @@ export default function GameResults ({
   }))
 
   return (
-    <main className='mx-auto min-h-screen w-full max-w-375 px-4 py-8 sm:px-8 sm:py-12 lg:px-12'>
+    <main className='mx-auto min-h-[105vh] w-full max-w-375 px-4 py-8 sm:px-8 sm:py-12 lg:px-12'>
       <Link
         href='/'
         className='mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground'
@@ -76,6 +76,48 @@ export default function GameResults ({
         </div>
 
         <div className='border-b-o border-border flex flex-col items-center justify-between gap-4 py-5 sm:flex-row'>
+          <Button
+            type='button'
+            variant='outline'
+            onClick={onRestart}
+            className='rounded-md border-primary px-5 text-primary hover:bg-primary hover:text-primary-foreground sm:w-32'
+          >
+            <RotateCcw aria-hidden='true' /> Play again
+          </Button>
+
+          <div
+            className='flex rounded-lg border-2 border-primary'
+            role='group'
+            aria-label='Result view'
+          >
+            <button
+              type='button'
+              aria-pressed={view === 'picked'}
+              onClick={() => setView('picked')}
+              className={cn(
+                ' px-4 py-1.5 text-sm transition-colors sm:px-7 sm:text-base',
+                view === 'picked'
+                  ? 'bg-primary text-primary-foreground rounded-l-md '
+                  : 'text-primary hover:bg-primary/10'
+              )}
+            >
+              Picked
+            </button>
+            <button
+              type='button'
+              aria-pressed={view === 'skipped'}
+              onClick={() => setView('skipped')}
+              className={cn(
+                ' px-4 py-1.5 text-sm transition-colors sm:px-7 sm:text-base',
+                view === 'skipped'
+                  ? 'rounded-r-md bg-primary text-primary-foreground'
+                  : 'text-primary hover:bg-primary/10'
+              )}
+            >
+              Skipped
+            </button>
+          </div>
+
           <div
             className='flex rounded-md border border-border bg-background p-1 sm:w-32'
             role='group'
@@ -112,47 +154,6 @@ export default function GameResults ({
               <span className='sr-only sm:not-sr-only'>List</span>
             </button>
           </div>
-          <div
-            className='flex rounded-lg border-2 border-primary'
-            role='group'
-            aria-label='Result view'
-          >
-            <button
-              type='button'
-              aria-pressed={view === 'picked'}
-              onClick={() => setView('picked')}
-              className={cn(
-                ' px-4 py-1.5 text-sm transition-colors sm:px-7 sm:text-base',
-                view === 'picked'
-                  ? 'bg-primary text-primary-foreground rounded-l-md '
-                  : 'text-primary hover:bg-primary/10'
-              )}
-            >
-              Picked
-            </button>
-            <button
-              type='button'
-              aria-pressed={view === 'skipped'}
-              onClick={() => setView('skipped')}
-              className={cn(
-                ' px-4 py-1.5 text-sm transition-colors sm:px-7 sm:text-base',
-                view === 'skipped'
-                  ? 'rounded-r-md bg-primary text-primary-foreground'
-                  : 'text-primary hover:bg-primary/10'
-              )}
-            >
-              Skipped
-            </button>
-          </div>
-
-          <Button
-            type='button'
-            variant='outline'
-            onClick={onRestart}
-            className='rounded-md border-primary px-5 text-primary hover:bg-primary hover:text-primary-foreground sm:w-32'
-          >
-            <RotateCcw aria-hidden='true' /> Play again
-          </Button>
         </div>
 
         <div className=' bg-background/40 p-4 sm:p-6'>
@@ -164,7 +165,10 @@ export default function GameResults ({
           </div>
 
           {layout === 'cards' ? (
-            <div key={`${view}-cards`} className='grid gap-3 sm:grid-cols-2 lg:grid-cols-3'>
+            <div
+              key={`${view}-cards`}
+              className='grid gap-3 sm:grid-cols-2 lg:grid-cols-3'
+            >
               {portfolios.map(({ folio, elo: portfolioElo }, index) => (
                 <PortfolioTile
                   key={`${view}-${folio.id}-${index}`}
