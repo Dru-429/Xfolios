@@ -66,7 +66,7 @@ export default function GameResults ({
             </p>
           ) : null}
 
-          <div className='flex flex-col justify-between gap-6 border-b border-border pb-8 sm:flex-row sm:items-end'>
+          <div className='flex flex-col justify-between gap-6 borde border-border pb-8 sm:flex-row sm:items-end'>
             <div>
               <h1 className='my-4 font-display text-5xl font-normal tracking-[-0.06em] sm:text-7xl'>
                 Here&apos;s your folio list.
@@ -75,18 +75,18 @@ export default function GameResults ({
           </div>
         </div>
 
-        <div className='border-b-o border-border flex flex-col items-center justify-between gap-4 py-5 sm:flex-row'>
+        <div className='border-b-1 border-border flex flex-col items-center justify-between gap-4 py-3 px-5 sm:flex-row'>
           <Button
             type='button'
             variant='outline'
             onClick={onRestart}
-            className='rounded-md border-primary px-5 text-primary hover:bg-primary hover:text-primary-foreground sm:w-32'
+            className='rounded-md border-primary px-5 text-sm text-primary hover:bg-primary hover:text-primary-foreground sm:w-32'
           >
             <RotateCcw aria-hidden='true' /> Play again
           </Button>
 
           <div
-            className='flex rounded-lg border-2 border-primary'
+            className='flex rounded-md border-2 border-primary'
             role='group'
             aria-label='Result view'
           >
@@ -97,7 +97,7 @@ export default function GameResults ({
               className={cn(
                 ' px-4 py-1.5 text-sm transition-colors sm:px-7 sm:text-base',
                 view === 'picked'
-                  ? 'bg-primary text-primary-foreground rounded-l-md '
+                  ? 'bg-primary text-primary-foreground rounded-l-sm '
                   : 'text-primary hover:bg-primary/10'
               )}
             >
@@ -110,7 +110,7 @@ export default function GameResults ({
               className={cn(
                 ' px-4 py-1.5 text-sm transition-colors sm:px-7 sm:text-base',
                 view === 'skipped'
-                  ? 'rounded-r-md bg-primary text-primary-foreground'
+                  ? 'rounded-r-sm bg-primary text-primary-foreground'
                   : 'text-primary hover:bg-primary/10'
               )}
             >
@@ -136,7 +136,6 @@ export default function GameResults ({
               )}
             >
               <LayoutGrid className='h-3.5 w-3.5' aria-hidden='true' />
-              <span className='sr-only sm:not-sr-only'>Cards</span>
             </button>
             <button
               type='button'
@@ -151,7 +150,6 @@ export default function GameResults ({
               )}
             >
               <List className='h-3.5 w-3.5' aria-hidden='true' />
-              <span className='sr-only sm:not-sr-only'>List</span>
             </button>
           </div>
         </div>
