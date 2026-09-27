@@ -3,8 +3,10 @@
 import { Moon, Sun, Play } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTheme } from '@/hooks/useTheme'
+import Image from 'next/image'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
+import navbarLogo from '@/public/logo/android-chrome-192x192.png'
 import ProfileLink from './ProfileLink'
 
 type NavbarUser = {
@@ -105,12 +107,15 @@ export function Navbar ({ user }: { user: NavbarUser | null }) {
       <div className='mx-auto flex h-18 w-full items-center justify-between px-6 sm:px-8 lg:px-10'>
         <Link
           href='/'
-          className='group flex items-center font-display text-[21px] font-medium tracking-[-0.03em]'
+          aria-label='Xfolios home'
+          className='group flex items-center'
         >
-          <span className='text-primary transition-opacity group-hover:opacity-80'>
-            X
-          </span>
-          <span className='ml-1 text-foreground'>folios</span>
+          <Image
+            src={navbarLogo}
+            alt='Xfolios'
+            priority
+            className='h-10 transition-opacity group-hover:opacity-80'
+          />
         </Link>
 
         {/* Navigation */}

@@ -74,7 +74,7 @@ function PageGrid ({
   }
 
   return (
-    <div className='portfolio-grid'>
+    <div className='portfolio-grid '>
       {pages.map((page, index) => (
         <PortfolioTile
           key={page.id}
