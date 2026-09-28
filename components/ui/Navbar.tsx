@@ -1,11 +1,12 @@
 'use client'
 
-import { Moon, Sun, Play } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { useTheme } from '@/hooks/useTheme'
+import { Moon, Sun } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import type { ReactNode } from 'react'
+import { usePathname } from 'next/navigation'
+
+import { useTheme } from '@/hooks/useTheme'
+import { cn } from '@/lib/utils'
 import navbarLogo from '@/public/logo/android-chrome-192x192.png'
 import ProfileLink from './ProfileLink'
 
@@ -15,30 +16,11 @@ type NavbarUser = {
   xHandle?: string | null
 }
 
-function NavPill ({
-  to,
-  label,
-  primary = false
-}: {
-  to: string
-  label: ReactNode
-  primary?: boolean
-}) {
-  return (
-    <Link
-      href={to}
-      className={cn(
-        'inline-flex h-9 items-center justify-center rounded-md border px-4 text-sm font-medium',
-        'transition-all duration-200',
-        primary
-          ? 'border-primary bg-primary text-primary-foreground hover:opacity-90'
-          : 'border-border bg-card text-foreground hover:border-foreground/40'
-      )}
-    >
-      {label}
-    </Link>
-  )
-}
+const pageLinks = [
+  { href: '/', label: 'Home', route: '/' },
+  { href: '/play', label: 'Play', route: '/play' },
+  { href: '/add', label: 'Submit', route: '/add' }
+] as const
 
 export function ThemeToggle ({
   isDark,
@@ -52,98 +34,96 @@ export function ThemeToggle ({
       type='button'
       onClick={toggleTheme}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-      className={cn(
-        'relative flex h-9 w-16 items-center justify-center rounded-md',
-        'border border-border bg-card',
-        'transition-colors duration-200',
-        'hover:border-foreground/40'
-      )}
+      aria-pressed={isDark}
+      className='relative grid h-11 w-20 shrink-0 grid-cols-2 rounded-lg border border-border bg-card p-1 text-muted-foreground outline-none transition-colors hover:border-foreground/40 focus-visible:ring-2 focus-visible:ring-ring/50'
     >
-      {/* Sliding orange indicator */}
       <span
         className={cn(
-          'absolute flex h-8 w-7 items-center justify-center',
-          'bg-primary text-primary-foreground ',
-          'transition-transform duration-300 ease-out',
-          isDark ? 'translate-x-4 rounded-r-md' : '-translate-x-4 rounded-l-md'
+          'absolute left-1 top-1 h-9 w-9 rounded-md bg-primary shadow-sm transition-transform duration-300 ease-out',
+          isDark && 'translate-x-9'
+        )}
+        aria-hidden='true'
+      />
+      <span
+        className={cn(
+          'relative z-10 flex items-center justify-center transition-colors',
+          !isDark && 'text-primary-foreground'
         )}
       >
-        {isDark ? (
-          <Moon size={14} strokeWidth={2} aria-hidden='true' />
-        ) : (
-          <Sun size={14} strokeWidth={2} aria-hidden='true' />
-        )}
+        <Sun className='h-4 w-4' aria-hidden='true' />
       </span>
-
-      {/* Empty side icons */}
       <span
         className={cn(
-          'relative z-10 flex w-1/2 items-center justify-center',
-          !isDark ? 'opacity-0' : 'text-muted-foreground'
+          'relative z-10 flex items-center justify-center transition-colors',
+          isDark && 'text-primary-foreground'
         )}
       >
-        <Sun size={13} aria-hidden='true' />
-      </span>
-
-      <span
-        className={cn(
-          'relative z-10 flex w-1/2 items-center justify-center',
-          isDark ? 'opacity-0' : 'text-muted-foreground'
-        )}
-      >
-        <Moon size={13} aria-hidden='true' />
+        <Moon className='h-4 w-4' aria-hidden='true' />
       </span>
     </button>
   )
 }
 
 export function Navbar ({ user }: { user: NavbarUser | null }) {
+  const pathname = usePathname()
   const { isDark, toggleTheme, mounted } = useTheme()
-  const hrefPlay = user?.xHandle ? `/play` : '/signin'
-  const hrefSubmit = user?.xHandle ? `/add` : '/signin'
-  
+  const isSignedIn = Boolean(user?.xHandle)
+
   return (
-    <header className='sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm px-5'>
-      <div className='mx-auto flex h-18 w-full items-center justify-between px-6 sm:px-8 lg:px-10'>
+    <header className='sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm'>
+      <div className='mx-auto grid w-full max-w-[1440px] grid-cols-[1fr_auto] items-center gap-x-3 gap-y-2 px-4 py-3 sm:grid-cols-[1fr_auto_1fr] sm:px-8 lg:px-10'>
         <Link
           href='/'
           aria-label='Xfolios home'
-          className='group flex items-center'
+          className='group col-start-1 row-start-1 flex h-11 w-11 items-center justify-center rounded-lg p-1 outline-none focus-visible:ring-2 focus-visible:ring-ring/50'
         >
           <Image
             src={navbarLogo}
             alt='Xfolios'
             priority
-            className='h-10 transition-opacity group-hover:opacity-80'
+            className='h-9 w-9 object-contain transition-opacity group-hover:opacity-80'
           />
         </Link>
 
-        {/* Navigation */}
         <nav
-          className='flex items-center gap-2 sm:gap-3'
+          className='col-span-2 row-start-2 flex h-11 justify-self-center rounded-lg border border-border bg-card p-1 sm:col-span-1 sm:col-start-2 sm:row-start-1'
           aria-label='Primary navigation'
         >
-          <NavPill
-            to={hrefPlay}
-            label={
-              <span className='flex items-center gap-2'>
-                <Play size={13} fill='currentColor' />
-                Play
-              </span>
-            }
-          />
+          {pageLinks.map(link => {
+            const isActive = pathname === link.route
+            const href = link.route !== '/' && !isSignedIn
+              ? '/signin'
+              : link.href
 
-          <NavPill to={hrefSubmit} label='Add' primary />
+            return (
+              <Link
+                key={link.route}
+                href={href}
+                aria-current={isActive ? 'page' : undefined}
+                className={cn(
+                  'inline-flex h-9 min-w-18 items-center justify-center rounded-md px-4 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/50 sm:min-w-20',
+                  isActive
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                )}
+              >
+                {link.label}
+              </Link>
+            )
+          })}
+        </nav>
 
-          {/* Theme */}
+        <div className='col-start-2 row-start-1 flex items-center justify-self-end gap-2 sm:col-start-3'>
           {mounted ? (
             <ThemeToggle isDark={isDark} toggleTheme={toggleTheme} />
           ) : (
-            <div className='h-9 w-18 rounded-md border border-border bg-card' />
+            <div
+              className='h-11 w-20 shrink-0 rounded-lg border border-border bg-card p-1'
+              aria-hidden='true'
+            />
           )}
-
           <ProfileLink user={user} />
-        </nav>
+        </div>
       </div>
     </header>
   )

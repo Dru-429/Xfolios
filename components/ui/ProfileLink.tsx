@@ -19,22 +19,22 @@ export default function ProfileLink ({ user }: ProfileLinkProps) {
     <Link
       href={href}
       className={cn(
-        'inline-flex h-9 w-fit shrink-0 items-center justify-center',
-        'rounded-md border border-border bg-card ',
-        'text-foreground transition-all duration-200',
-        'hover:border-foreground/40'
+        'inline-flex h-11 w-fit shrink-0 items-center justify-center p-1',
+        'rounded-lg border border-border bg-card',
+        'text-foreground outline-none transition-colors duration-200',
+        'hover:border-foreground/40 focus-visible:ring-2 focus-visible:ring-ring/50'
       )}
     >
       {user?.image ? (
         <Image
           src={user.image}
           alt={user.name ?? 'Profile'}
-          width={32}
-          height={32}
-          className='p-[1px] rounded-md'
+          width={36}
+          height={36}
+          className='h-9 w-9 rounded-md object-cover'
         />  
       ) : (
-        <span className="px-2">Sign in</span>
+        <span className='px-3 text-md font-medium text-[#207fbe]'>Sign in</span>
       )}
     </Link>
   )
