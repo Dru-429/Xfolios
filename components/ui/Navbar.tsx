@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation'
 import { useTheme } from '@/hooks/useTheme'
 import { cn } from '@/lib/utils'
 import ProfileLink from './ProfileLink'
+import { Logo } from './Logo';
 
 type NavbarUser = {
   name?: string | null
@@ -75,14 +76,16 @@ export function Navbar ({ user }: { user: NavbarUser | null }) {
           aria-label='Xfolios home'
           className='group col-start-1 row-start-1 flex h-11 w-[136px] items-center justify-center rounded-lg p-1 text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/50'
         >
-          <span
+          {/* <span
             aria-hidden='true'
             className='block h-9 w-32 bg-current transition-opacity group-hover:opacity-80'
             style={{
               mask: "url('/logo/logo.svg') center / contain no-repeat",
               WebkitMask: "url('/logo/logo.svg') center / contain no-repeat"
             }}
-          />
+          /> */}
+          <Logo className="h-9 w-9" />
+          
         </Link>
 
         <nav
