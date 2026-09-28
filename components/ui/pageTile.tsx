@@ -17,6 +17,7 @@ export type PortfolioTileData = {
   'portfolio url': string
   'cover url'?: string | null
   elo?: number
+  bookmarkCount?: number
   bookmarked?: boolean
   isAuthenticated?: boolean
 }

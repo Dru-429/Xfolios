@@ -12,6 +12,7 @@ export default async function HomePage () {
         websiteUrl: true,
         coverUrl: true,
         elo: true,
+        bookmarked: true,
         user: {
           select: {
             xUsername: true,
@@ -38,6 +39,7 @@ export default async function HomePage () {
     'portfolio url': page.websiteUrl,
     'cover url': page.coverUrl,
     elo: page.elo,
+    bookmarkCount: page.bookmarked,
     bookmarked: bookmarkedPageIds.has(page.id)
   }))
 
