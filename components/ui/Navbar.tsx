@@ -74,7 +74,7 @@ export function Navbar ({ user }: { user: NavbarUser | null }) {
         <Link
           href='/'
           aria-label='Xfolios home'
-          className='group col-start-1 row-start-1 flex h-11 w-[136px] items-center justify-center rounded-lg p-1 text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/50'
+          className='group col-start-1 row-start-1 flex h-11 w- items-center justify-start rounded-lg p-1 text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/50'
         >
           {/* <span
             aria-hidden='true'
