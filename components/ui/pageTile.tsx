@@ -66,7 +66,7 @@ export default function PortfolioTile ({
 
       <button
         type='button'
-        className='absolute right-0 top-0 z-10 inline-flex h-9 w-full cursor-pointer items-center justify-end bg-linear-to-b from-black/80 to-transparent pr-4 text-white opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100'
+        className='absolute right-0 top-0 z-10 inline-flex h-9 w-full cursor-pointer items-center justify-end bg-linear-to-b from-black/80 to-transparent pr-4 text-white opacity-100 transition-opacity group-hover:opacity-100 focus-visible:opacity-100'
         aria-label={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
         aria-pressed={isBookmarked}
         disabled={isUpdatingBookmark}
@@ -74,7 +74,8 @@ export default function PortfolioTile ({
           event.preventDefault()
           event.stopPropagation()
           if (!isAuthenticated) {
-            router.push(`/signin?callbackUrl=/page/${portfolio.pageId}`)
+            const callbackUrl = `/page/${portfolio.pageId}`
+            router.push(`/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`)
             return
           }
           setIsUpdatingBookmark(true)

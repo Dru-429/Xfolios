@@ -50,7 +50,7 @@ export default async function WebsitePageRoute({
     <WebsitePage
       page={page}
       viewer={session?.user ?? null}
-      isSaved={page.bookmarks.length > 0}
+      isSaved={Array.isArray(page.bookmarks) && page.bookmarks.length > 0}
       isOwner={session?.user?.id === page.userId}
     />
   )

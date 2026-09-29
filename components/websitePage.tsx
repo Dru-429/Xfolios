@@ -10,6 +10,7 @@ import {
   X
 } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -41,11 +42,12 @@ type WebsitePageProps = {
     image?: string | null
     xHandle?: string | null
   } | null
-  isSaved: boolean
+  isSaved?: boolean
   isOwner: boolean
 }
 
-export default function WebsitePage ({ page, viewer, isSaved, isOwner }: WebsitePageProps) {
+export default function WebsitePage ({ page, viewer, isSaved = false, isOwner }: WebsitePageProps) {
+  const router = useRouter()
   const [saved, setSaved] = useState(isSaved)
   const [bookmarkCount, setBookmarkCount] = useState(page.bookmarked)
   const [isUpdatingBookmark, setIsUpdatingBookmark] = useState(false)
@@ -161,6 +163,12 @@ export default function WebsitePage ({ page, viewer, isSaved, isOwner }: Website
                       type='button'
                       size='lg'
                       onClick={() => {
+                        if (!viewer) {
+                          const callbackUrl = `/page/${page.id}`
+                          router.push(`/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`)
+                          return
+                        }
+
                         if (saved) {
                           setShowRemoveConfirmation(true)
                         } else {
@@ -171,7 +179,7 @@ export default function WebsitePage ({ page, viewer, isSaved, isOwner }: Website
                         saved ? 'Remove from saved folios' : 'Save folio'
                       }
                       aria-pressed={saved}
-                      disabled={isUpdatingBookmark || !viewer}
+                      disabled={isUpdatingBookmark}
                       className={
                         saved
                           ? 'py-1 rounded-sm'
