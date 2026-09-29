@@ -98,7 +98,7 @@ export default function ProfilePage ({
   const initials = profile.name.trim().slice(0, 2).toUpperCase()
 
   return (
-    <div className='relative min-h-screen bg-background text-foreground'>
+    <div className='relative min-h-[105vh] bg-background text-foreground'>
       <Navbar
         user={
           isOwner
@@ -111,7 +111,7 @@ export default function ProfilePage ({
         }
       />
 
-      <main className='mx-auto w-full max-w-6xl px-5 pb-20 pt-8 sm:px-8 sm:pt-12'>
+      <main className='mx-auto w-full min-h-screen max-w-6xl px-5 pb-20 pt-8 sm:px-8 sm:pt-12'>
         <Link
           href='/'
           className='mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground'
@@ -275,7 +275,7 @@ export default function ProfilePage ({
         </AnimatePresence>
       </main>
       
-      <div className="fixed bottom-0 w-full">
+      <div className="relative bottom-0 w-full">
         <Footer />
       </div>
     </div>
