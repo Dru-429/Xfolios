@@ -139,8 +139,8 @@ export default function Landing ({
         <Hero num={records.length} />
 
         <div className='mb-12 flex flex-col items-stretch justify-end gap-3 border-b border-border pb-4 sm:flex-row sm:items-center'>
-          <label className='relative block w-full sm:max-w-sm'>
-            <span className='sr-only'>Search portfolios</span>
+          <label className='group relative block w-full sm:max-w-sm'>
+            <span className='sr-only'>Search pages</span>
             <Input
               type='search'
               value={search}
@@ -151,7 +151,7 @@ export default function Landing ({
               placeholder='Search portfolios...'
               className='h-11 rounded-md bg-card pr-12'
             />
-            <span className='pointer-events-none absolute right-1 top-1 inline-flex h-9 w-9 items-center justify-center rounded-sm bg-primary text-primary-foreground'>
+            <span className='pointer-events-none absolute right-1 top-1 inline-flex h-9 w-9 items-center justify-center rounded-sm group-hover:bg-primary bg-primary/80 text-primary-foreground'>
               <Search className='h-4 w-4' aria-hidden='true' />
             </span>
           </label>

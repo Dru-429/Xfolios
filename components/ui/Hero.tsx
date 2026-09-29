@@ -23,7 +23,7 @@ export default function Hero ({ num }: HeroProps) {
   }, [num, count])
 
   return (
-    <section className='mb-12 md:mb-20 flex flex-col justify-between gap-8 border-b border-border pb-10 md:py-20 sm:flex-row sm:items-end'>
+    <section className='mb-12 md:mb-20 flex flex-col justify-between gap-8 pb-10 md:py-20 sm:flex-row sm:items-end'>
       <div className='max-w-2xl'>
         <p className='mb-5 font-mono text-[11px] uppercase tracking-[0.18em] text-primary'>
           A living index / 2026
