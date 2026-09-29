@@ -1,8 +1,23 @@
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 
 import { auth } from '@/auth'
 import WebsitePage from '@/components/websitePage'
 import { prisma } from '@/src/db'
+
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ pageId: string }>
+}): Promise<Metadata> {
+  const { pageId } = await params
+  const page = await prisma.page.findUnique({
+    where: { id: pageId },
+    select: { title: true }
+  })
+
+  return { title: page?.title ?? 'Xfolios' }
+}
 
 export default async function WebsitePageRoute({
   params

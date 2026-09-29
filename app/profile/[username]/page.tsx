@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 
 import { auth } from '@/auth'
 import ProfilePage from '@/components/profilePage'
@@ -6,6 +7,16 @@ import { prisma } from '@/src/db'
 
 type ProfileRouteProps = {
   params: Promise<{ username: string }>
+}
+
+export async function generateMetadata({ params }: ProfileRouteProps): Promise<Metadata> {
+  const { username } = await params
+  const profile = await prisma.user.findUnique({
+    where: { xHandle: username },
+    select: { xUsername: true }
+  })
+
+  return { title: profile?.xUsername ?? 'Xfolios' }
 }
 
 export default async function ProfileRoute({ params }: ProfileRouteProps) {

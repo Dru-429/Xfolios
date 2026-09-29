@@ -5,7 +5,7 @@ import GamePage from '@/components/gamePage'
 import { prisma } from '@/src/db'
 
 export const metadata: Metadata = {
-  title: 'Folio game | X folios',
+  title: 'Explore Game',
   description: 'Choose between portfolios, climb the Elo ladder, and find your favorites.'
 }
 
