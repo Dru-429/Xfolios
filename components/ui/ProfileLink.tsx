@@ -35,7 +35,7 @@ export default function ProfileLink ({ user }: ProfileLinkProps) {
           className='h-9 w-9 rounded-md object-cover'
         />  
       ) : (
-        <span className='px-3 text-md font-medium text-[#207fbe]'>Sign in</span>
+        <span className='px-3 text-md font-medium text-[#0d8ee4] dark:text-primary'>Sign in</span>
       )}
     </Link>
   )
