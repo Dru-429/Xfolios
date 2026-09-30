@@ -33,7 +33,11 @@ type ProfilePageProps = {
   pages: ProfilePageItem[]
   bookmarks: ProfilePageItem[]
   isOwner: boolean
-  isAuthenticated: boolean
+  viewer: {
+    name?: string | null
+    image?: string | null
+    xHandle?: string | null
+  } | null
 }
 
 type ProfileTab = 'folios' | 'saved'
@@ -92,24 +96,14 @@ export default function ProfilePage ({
   pages,
   bookmarks,
   isOwner,
-  isAuthenticated
+  viewer
 }: ProfilePageProps) {
   const [activeTab, setActiveTab] = useState<ProfileTab>('folios')
   const initials = profile.name.trim().slice(0, 2).toUpperCase()
 
   return (
     <div className='relative min-h-[105vh] bg-background text-foreground'>
-      <Navbar
-        user={
-          isOwner
-            ? {
-                name: profile.name,
-                image: profile.avatar,
-                xHandle: profile.handle
-              }
-            : null
-        }
-      />
+      <Navbar user={viewer} />
 
       <main className='mx-auto w-full min-h-screen max-w-6xl px-5 pb-20 pt-8 sm:px-8 sm:pt-12'>
         <Link
@@ -152,7 +146,9 @@ export default function ProfilePage ({
               </div>
               <div className=' hidden items-center gap-8 text-sm sm:flex'>
                 <p>
-                  <strong className='font-semibold'>{profile.totalPages}</strong>{' '}
+                  <strong className='font-semibold'>
+                    {profile.totalPages}
+                  </strong>{' '}
                   folio{profile.totalPages === 1 ? '' : 's'}
                 </p>
                 <p>
@@ -177,22 +173,19 @@ export default function ProfilePage ({
                     View on X
                   </a>
                 </Button>
-                {isOwner &&
-                  (
-                    <Button asChild size='sm' className='rounded-md w-1/4 bg-primary/80'>
-                      <a
-                        href={`/add`}
-                        target='_blank'
-                        rel='noreferrer'
-                      >
-                        Add Page 
-                      </a>
-                    </Button>
-                  )
-                }
+                {isOwner && (
+                  <Button
+                    asChild
+                    size='sm'
+                    className='rounded-md w-1/4 bg-primary/80'
+                  >
+                    <a href={`/add`} target='_blank' rel='noreferrer'>
+                      Add Page
+                    </a>
+                  </Button>
+                )}
               </div>
             </div>
-
           </div>
         </motion.section>
 
@@ -259,7 +252,11 @@ export default function ProfilePage ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <PageGrid pages={pages} profile={profile} isAuthenticated={isAuthenticated} />
+              <PageGrid
+                pages={pages}
+                profile={profile}
+                isAuthenticated={Boolean(viewer)}
+              />
             </motion.div>
           ) : (
             <motion.div
@@ -269,13 +266,17 @@ export default function ProfilePage ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <PageGrid pages={bookmarks} profile={profile} isAuthenticated={isAuthenticated} />
+              <PageGrid
+                pages={bookmarks}
+                profile={profile}
+                isAuthenticated={Boolean(viewer)}
+              />
             </motion.div>
           )}
         </AnimatePresence>
       </main>
-      
-      <div className="relative bottom-0 w-full">
+
+      <div className='relative bottom-0 w-full'>
         <Footer />
       </div>
     </div>

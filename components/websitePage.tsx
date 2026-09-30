@@ -291,6 +291,7 @@ export default function WebsitePage ({ page, viewer, isSaved = false, isOwner }:
           />
         </div>
       ) : null}
+
       {showRemoveConfirmation ? (
         <div
           className='fixed inset-0 z-[110] grid place-items-center bg-black/50 p-5'
@@ -325,6 +326,7 @@ export default function WebsitePage ({ page, viewer, isSaved = false, isOwner }:
           </div>
         </div>
       ) : null}
+      
       {isEditOpen ? (
         <EditPage page={page} onClose={() => setIsEditOpen(false)} />
       ) : null}

@@ -28,16 +28,14 @@ export default async function ProfileRoute({ params }: ProfileRouteProps) {
       pages: {
         orderBy: { createdAt: 'desc' },
         include: {
-          bookmarks: {
-            where: { userId: session?.user?.id ?? '' },
-            select: { id: true }
-          }
+          bookmarks: session?.user?.id
+            ? { where: { userId: session.user.id }, select: { id: true } }
+            : false
         }
       },
-      bookmarks: {
-        include: { page: true },
-        orderBy: { createdAt: 'desc' }
-      }
+      bookmarks: session?.user?.xHandle === username
+        ? { include: { page: true }, orderBy: { createdAt: 'desc' } }
+        : false
     }
   })
 
@@ -46,6 +44,7 @@ export default async function ProfileRoute({ params }: ProfileRouteProps) {
   }
 
   const isOwner = session?.user?.xHandle === profile.xHandle
+  const profileBookmarks = profile.bookmarks || []
 
   return (
     <ProfilePage
@@ -54,7 +53,7 @@ export default async function ProfileRoute({ params }: ProfileRouteProps) {
         handle: profile.xHandle,
         avatar: profile.xAvatar,
         totalPages: profile.pages.length,
-        totalBookmarks: profile.bookmarks.length
+        totalBookmarks: profileBookmarks.length
       }}
       pages={profile.pages.map(page => ({
         id: page.id,
@@ -62,9 +61,9 @@ export default async function ProfileRoute({ params }: ProfileRouteProps) {
         websiteUrl: page.websiteUrl,
         coverUrl: page.coverUrl,
         elo: page.elo,
-        bookmarked: page.bookmarks.length > 0
+        bookmarked: Array.isArray(page.bookmarks) && page.bookmarks.length > 0
       }))}
-      bookmarks={profile.bookmarks.map(bookmark => ({
+      bookmarks={profileBookmarks.map(bookmark => ({
         id: bookmark.page.id,
         title: bookmark.page.title,
         websiteUrl: bookmark.page.websiteUrl,
@@ -73,7 +72,13 @@ export default async function ProfileRoute({ params }: ProfileRouteProps) {
         bookmarked: true
       }))}
       isOwner={isOwner}
-      isAuthenticated={Boolean(session?.user)}
+      viewer={session?.user
+        ? {
+            name: session.user.name,
+            image: session.user.image,
+            xHandle: session.user.xHandle
+          }
+        : null}
     />
   )
 }
