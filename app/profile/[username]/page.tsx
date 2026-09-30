@@ -1,8 +1,9 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 
 import { auth } from '@/auth'
 import ProfilePage from '@/components/profilePage'
+import { decodeRouteSegment, getProfileHref, normalizeXHandle } from '@/lib/routes'
 import { prisma } from '@/src/db'
 
 type ProfileRouteProps = {
@@ -10,7 +11,8 @@ type ProfileRouteProps = {
 }
 
 export async function generateMetadata({ params }: ProfileRouteProps): Promise<Metadata> {
-  const { username } = await params
+  const { username: routeUsername } = await params
+  const username = normalizeXHandle(routeUsername)
   const profile = await prisma.user.findUnique({
     where: { xHandle: username },
     select: { xUsername: true }
@@ -20,8 +22,22 @@ export async function generateMetadata({ params }: ProfileRouteProps): Promise<M
 }
 
 export default async function ProfileRoute({ params }: ProfileRouteProps) {
-  const { username } = await params
+  const { username: routeUsername } = await params
+  const username = normalizeXHandle(routeUsername)
+
+  if (!username) {
+    notFound()
+  }
+
+  if (decodeRouteSegment(routeUsername) !== username) {
+    redirect(getProfileHref(username))
+  }
+
   const session = await auth()
+  const viewerHandle = session?.user?.xHandle
+    ? normalizeXHandle(session.user.xHandle)
+    : null
+  const isViewingOwnProfile = viewerHandle === username
   const profile = await prisma.user.findUnique({
     where: { xHandle: username },
     include: {
@@ -32,10 +48,7 @@ export default async function ProfileRoute({ params }: ProfileRouteProps) {
             ? { where: { userId: session.user.id }, select: { id: true } }
             : false
         }
-      },
-      bookmarks: session?.user?.xHandle === username
-        ? { include: { page: true }, orderBy: { createdAt: 'desc' } }
-        : false
+      }
     }
   })
 
@@ -43,8 +56,14 @@ export default async function ProfileRoute({ params }: ProfileRouteProps) {
     notFound()
   }
 
-  const isOwner = session?.user?.xHandle === profile.xHandle
-  const profileBookmarks = profile.bookmarks || []
+  const isOwner = viewerHandle === profile.xHandle
+  const profileBookmarks = isViewingOwnProfile
+    ? await prisma.bookmark.findMany({
+        where: { userId: profile.id },
+        include: { page: true },
+        orderBy: { createdAt: 'desc' }
+      })
+    : []
 
   return (
     <ProfilePage

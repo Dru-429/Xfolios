@@ -111,10 +111,7 @@ function PortfolioTileContent ({
   domain: string
 }) {
   const storedCoverUrl = portfolio['cover url']?.trim()
-  const coverUrl = storedCoverUrl && !isSameImageUrl(
-    storedCoverUrl,
-    portfolio['X image url']
-  )
+  const coverUrl = storedCoverUrl
     ? storedCoverUrl
     : ''
   const previewUrl = coverUrl || (portfolio.pageId
@@ -189,22 +186,4 @@ function PreviewFallback () {
       <span className='absolute bottom-[10%] left-[7%] h-1 w-[24%] rounded-full bg-foreground/25' />
     </div>
   )
-}
-
-function isSameImageUrl (first: string, second: string) {
-  try {
-    const imageIdentity = (value: string) => {
-      const url = new URL(value)
-      const pathname = decodeURIComponent(url.pathname).replace(
-        /_(?:normal|bigger|mini|400x400)(?=\.[^.]+$)/i,
-        ''
-      )
-
-      return `${url.hostname.toLowerCase()}${pathname}`
-    }
-
-    return imageIdentity(first) === imageIdentity(second)
-  } catch {
-    return first.trim() === second.trim()
-  }
 }

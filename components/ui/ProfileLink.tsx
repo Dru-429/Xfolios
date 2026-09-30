@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from "@/lib/utils";
+import { getProfileHref } from '@/lib/routes'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -13,7 +14,7 @@ type ProfileLinkProps = {
 }
 
 export default function ProfileLink ({ user }: ProfileLinkProps) {
-  const href = user?.xHandle ? `/profile/${user.xHandle}` : '/signin'
+  const href = user?.xHandle ? getProfileHref(user.xHandle) : '/signin'
 
   return (
     <Link

@@ -16,6 +16,7 @@ import { useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import EditPage from '@/components/ui/editPage'
+import { getProfileHref } from '@/lib/routes'
 import { setBookmark } from '@/app/page/[pageId]/actions'
 import { ThemeToggle } from './ui/Navbar';
 
@@ -232,7 +233,7 @@ export default function WebsitePage ({ page, viewer, isSaved = false, isOwner }:
               </div>
 
               <Link
-                href={`/profile/${page.user.xHandle}`}
+                href={getProfileHref(page.user.xHandle)}
                 className='mt-auto group flex items-center gap-3 border-t border-border pt-6 transition-colors hover:text-primary'
               >
                 <Avatar className='h-11 w-11 rounded-md border border-border'>
