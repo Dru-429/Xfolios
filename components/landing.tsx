@@ -30,7 +30,7 @@ type LandingUser = {
   xHandle?: string | null
 }
 
-const PAGE_SIZE = 20
+const PAGE_SIZE = 18
 const THEME_STORAGE_KEY = 'x-folios-theme'
 const THEME_EVENT = 'x-folios-theme-change'
 
@@ -41,6 +41,34 @@ const sortOptions: { value: SortOption; label: string }[] = [
   { value: 'elo-asc', label: 'Lowest to highest ELO' },
   { value: 'bookmarks-desc', label: 'Highest bookmarked' }
 ]
+
+function getPaginationItems (currentPage: number, pageCount: number) {
+  if (pageCount <= 7) {
+    return Array.from({ length: pageCount }, (_, index) => index + 1)
+  }
+
+  const visiblePages = [...new Set([
+    1,
+    currentPage - 1,
+    currentPage,
+    currentPage + 1,
+    pageCount
+  ])].filter(item => item >= 1 && item <= pageCount).sort((a, b) => a - b)
+
+  return visiblePages.flatMap((item, index) => {
+    if (index === 0) return [item]
+
+    const previous = visiblePages[index - 1]
+    const gap = item - previous
+    const separator = gap === 2
+      ? [previous + 1]
+      : gap > 2
+        ? [index === 1 ? 'start-ellipsis' : 'end-ellipsis']
+        : []
+
+    return [...separator, item]
+  })
+}
 
 function getStoredTheme () {
   if (typeof window === 'undefined') {
@@ -111,6 +139,7 @@ export default function Landing ({
     })
   }, [records, search, sort])
   const pageCount = Math.max(1, Math.ceil(filteredRecords.length / PAGE_SIZE))
+  const paginationItems = getPaginationItems(page, pageCount)
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDark)
@@ -253,18 +282,22 @@ export default function Landing ({
         )}
 
         {filteredRecords.length ? (
-          <div className='mt-12 flex items-center justify-between border-t border-border pt-5'>
-          <Button
-            variant='ghost'
-            onClick={() => changePage(page - 1)}
-            disabled={page === 1}
-            className='px-0 text-muted-foreground hover:bg-transparent hover:text-foreground'
+          <nav
+            className='mt-12 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-1 border-t border-border pt-5 sm:gap-3'
+            aria-label='Pagination'
           >
-            <ChevronLeft aria-hidden='true' /> Previous
-          </Button>
-          <div className='flex items-center gap-1' aria-label='Pagination'>
-            {Array.from({ length: pageCount }, (_, index) => index + 1).map(
-              item => (
+            <Button
+              variant='ghost'
+              onClick={() => changePage(page - 1)}
+              disabled={page === 1}
+              aria-label='Previous page'
+              className='h-9 gap-1 px-2 text-muted-foreground hover:bg-transparent hover:text-foreground sm:px-3'
+            >
+              <ChevronLeft aria-hidden='true' />
+              <span className='hidden sm:inline'>Previous</span>
+            </Button>
+            <div className='flex min-w-0 items-center justify-center gap-0.5 sm:gap-1'>
+              {paginationItems.map(item => typeof item === 'number' ? (
                 <Button
                   key={item}
                   variant={item === page ? 'default' : 'ghost'}
@@ -272,24 +305,33 @@ export default function Landing ({
                   onClick={() => changePage(item)}
                   aria-label={`Go to page ${item}`}
                   aria-current={item === page ? 'page' : undefined}
-                  className={
-                    item === page ? 'h-8 w-8' : 'h-8 w-8 text-muted-foreground'
-                  }
+                  className={item === page
+                    ? 'h-8 w-8 shrink-0 text-xs'
+                    : 'h-8 w-8 shrink-0 text-xs text-muted-foreground'}
                 >
                   {item}
                 </Button>
-              )
-            )}
-          </div>
-          <Button
-            variant='ghost'
-            onClick={() => changePage(page + 1)}
-            disabled={page === pageCount}
-            className='px-0 text-muted-foreground hover:bg-transparent hover:text-foreground'
-          >
-            Next <ChevronRight aria-hidden='true' />
-          </Button>
-          </div>
+              ) : (
+                <span
+                  key={item}
+                  className='px-1 text-xs text-muted-foreground'
+                  aria-hidden='true'
+                >
+                  ...
+                </span>
+              ))}
+            </div>
+            <Button
+              variant='ghost'
+              onClick={() => changePage(page + 1)}
+              disabled={page === pageCount}
+              aria-label='Next page'
+              className='h-9 gap-1 px-2 text-muted-foreground hover:bg-transparent hover:text-foreground sm:px-3'
+            >
+              <span className='hidden sm:inline'>Next</span>
+              <ChevronRight aria-hidden='true' />
+            </Button>
+          </nav>
         ) : null}
       </main>
 
