@@ -108,14 +108,14 @@ export default function ProfilePage ({
       <main className='mx-auto w-full min-h-screen max-w-6xl px-5 pb-20 pt-8 sm:px-8 sm:pt-12'>
         <Link
           href='/'
-          className='mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground'
+          className='mb-4 sm:mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground'
         >
           <ArrowLeft className='h-4 w-4' aria-hidden='true' />
           All folios
-        </Link>
+        </Link> 
 
         <motion.section
-          className='grid grid-cols-[88px_minmax(0,1fr)] gap-6 pb-10 sm:grid-cols-[160px_minmax(0,1fr)] sm:gap-12 sm:px-8'
+          className='grid grid-cols-[88px_minmax(0,1fr)] gap-6 pb-5 sm:pb-10 sm:grid-cols-[160px_minmax(0,1fr)] sm:gap-12 sm:px-8'
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
@@ -144,7 +144,7 @@ export default function ProfilePage ({
                   @{profile.handle}
                 </p>
               </div>
-              <div className=' hidden items-center gap-8 text-sm sm:flex'>
+              <div className='  items-center gap-8 text-sm flex'>
                 <p>
                   <strong className='font-semibold'>
                     {profile.totalPages}
@@ -188,23 +188,6 @@ export default function ProfilePage ({
             </div>
           </div>
         </motion.section>
-
-        <div className='grid grid-cols-2 border-y border-border py-4 text-center text-sm sm:hidden'>
-          <p>
-            <strong className='block font-semibold'>
-              {profile.totalPages}
-            </strong>
-            <span className='text-muted-foreground'>
-              folio{profile.totalPages === 1 ? '' : 's'}
-            </span>
-          </p>
-          <p>
-            <strong className='block font-semibold'>
-              {profile.totalBookmarks}
-            </strong>
-            <span className='text-muted-foreground'>saved</span>
-          </p>
-        </div>
 
         <div
           className='flex justify-center gap-10 sm:border-t border-border sm:mt-2'
