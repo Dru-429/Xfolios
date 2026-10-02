@@ -167,8 +167,8 @@ export default function Landing ({
       >
         <Hero num={records.length} />
 
-        <div className='mb-12 flex flex-col items-stretch justify-end gap-3 border-b border-border pb-4 sm:flex-row sm:items-center'>
-          <label className='group relative block w-full sm:max-w-sm'>
+        <div className='mb-12 flex not-odd:items-stretch justify-end gap-3 border-b border-border pb-4 flex-row sm:items-center'>
+          <label className='group relative block w-full  sm:max-w-sm'>
             <span className='sr-only'>Search pages</span>
             <Input
               type='search'

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { commitGame } from '@/app/play/actions'
 import {
@@ -27,6 +28,7 @@ export default function GamePage ({
   user: GameUser | null
   folios: GamePortfolio[]
 }) {
+  const router = useRouter()
   const [phase, setPhase] = useState<'intro' | 'playing' | 'results'>('intro')
   const [gameFolios, setGameFolios] = useState(folios)
   const [plans, setPlans] = useState<RoundPlan[]>([])
@@ -51,6 +53,15 @@ export default function GamePage ({
     setRoundResult(null)
     setSaveError(null)
     setPhase('playing')
+  }
+
+  function handleStart () {
+    if (!user) {
+      router.push('/signin?callbackUrl=%2Fplay')
+      return
+    }
+
+    startGame()
   }
 
   function chooseWinner (winner: GamePortfolio) {
@@ -142,7 +153,7 @@ export default function GamePage ({
 
   return (
     <div className='min-h-screen bg-background text-foreground'>
-      {phase === 'intro' ? <GameIntro onStart={startGame} /> : null}
+      {phase === 'intro' ? <GameIntro onStart={handleStart} /> : null}
       {phase === 'playing' ? (
         <GameRound
           round={round}

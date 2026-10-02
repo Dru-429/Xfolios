@@ -89,7 +89,7 @@ export function Navbar ({ user }: { user: NavbarUser | null }) {
         </Link>
 
         <nav
-          className='col-span-2 row-start-2 flex h-11 justify-self-center rounded-lg border border-border bg-card p-1 sm:col-span-1 sm:col-start-2 sm:row-start-1'
+          className='col-span-2 row-start-2 hidden sm:flex h-11 justify-self-center rounded-lg border border-border bg-card p-1 sm:col-span-1 sm:col-start-2 sm:row-start-1'
           aria-label='Primary navigation'
         >
           {pageLinks.map(link => {
