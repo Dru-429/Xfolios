@@ -81,10 +81,10 @@ export default function WebsitePage ({ page, viewer, isSaved = false, isOwner }:
 
   return (
     <div className='min-h-screen bg-background text-foreground'>
-      <main className='mx-auto w-full min-h-screen h-full p-5 '>
+      <main className='mx-auto w-full min-h-screen h-full p-2 sm:p-5 '>
         <Link
           href='/'
-          className='mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground'
+          className='mb-6 sm:md-3  inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground'
         >
           <div className=" inline-flex items-center gap-2 text-sm">
             <ArrowLeft className='h-4 w-4' aria-hidden='true' />
@@ -99,13 +99,13 @@ export default function WebsitePage ({ page, viewer, isSaved = false, isOwner }:
           transition={{ duration: 0.4, ease: 'easeOut' }}
         >
           <div className='grid lg:grid-cols-[minmax(0,7.5fr)_minmax(250px,2.5fr)]'>
-            <div className='relative min-h-[460px] border-b border-border bg-secondary/40 p-4 sm:min-h-[600px] sm:p-0 lg:border-b-0 lg:border-r sm:h-[90vh]'>
-              <div className='relative flex h-full min-h-[420px] items-center justify-center overflow-hidden rounded-lg border border-border bg-background sm:min-h-[80vh]'>
+            <div className='relative min-h-[80vh] border-b border-border bg-secondary/40 rounded-md sm:min-h-[600px] lg:border-b-0 lg:border-r sm:h-[90vh]'>
+              <div className='relative flex h-full min-h-[75vh] items-center justify-center overflow-hidden rounded-lg border border-border bg-background sm:min-h-[80vh]'>
                 <div
                   className='absolute inset-0 preview-warm opacity-50'
                   aria-hidden='true'
                 />
-                <div className='relative z-10 flex h-full w-full items-center justify-center p-2 sm:p-6'>
+                <div className='relative z-10 flex h-full w-full items-center justify-center p- sm:p-6'>
                   <iframe
                     src={page.websiteUrl}
                     title={`${page.title} website`}
