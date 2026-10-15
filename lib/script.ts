@@ -214,7 +214,7 @@ function getDashboardOrigin () {
     process.env.NEXTAUTH_URL
 
   if (!configuredUrl) return null
-
+    
   try {
     return new URL(configuredUrl)
   } catch {
