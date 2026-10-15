@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 import { useTheme } from '@/hooks/useTheme'
 import { cn } from '@/lib/utils'
 import ProfileLink from './ProfileLink'
-import { Logo } from './Logo';
+import { Logo } from '../svg/Logo';
 
 type NavbarUser = {
   name?: string | null
