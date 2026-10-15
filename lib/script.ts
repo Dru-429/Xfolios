@@ -2,145 +2,246 @@ import 'dotenv/config'
 
 import { prisma } from '@/src/db'
 
-const REQUEST_TIMEOUT_MS = 10_000
-const CONCURRENCY = 5
+const BATCH_SIZE = 5
+const REQUEST_TIMEOUT_MS = 12_000
+const DASHBOARD_ORIGIN = getDashboardOrigin()
 
-type PageWithoutCover = {
+type PageRecord = {
   id: string
+  userId: string
   websiteUrl: string
 }
 
-export async function backfillPageCoverUrls () {
+type CheckResult = PageRecord & {
+  embeddable: boolean
+  reason: string
+}
+
+export async function removePagesBlockedFromIframes () {
   const pages = await prisma.page.findMany({
-    where: { coverUrl: null },
-    select: { id: true, websiteUrl: true }
+    select: {
+      id: true,
+      userId: true,
+      websiteUrl: true
+    },
+    orderBy: { createdAt: 'asc' }
   })
 
-  console.log(`Found ${pages.length} pages without a cover URL.`)
-
-  let nextIndex = 0
-  let updated = 0
-  let skipped = 0
-
-  async function worker () {
-    while (nextIndex < pages.length) {
-      const page = pages[nextIndex++]
-      await processPage(page)
-    }
-  }
-
-  async function processPage (page: PageWithoutCover) {
-    try {
-      const coverUrl = await fetchOpenGraphImage(page.websiteUrl)
-
-      if (!coverUrl) {
-        skipped++
-        console.warn(`[skip] No OG image: ${page.websiteUrl}`)
-        return
-      }
-
-      const result = await prisma.page.updateMany({
-        where: { id: page.id, coverUrl: null },
-        data: { coverUrl }
-      })
-
-      if (result.count === 1) {
-        updated++
-        console.log(`[saved] ${page.websiteUrl} -> ${coverUrl}`)
-      } else {
-        skipped++
-        console.log(`[skip] Cover already set: ${page.websiteUrl}`)
-      }
-    } catch (error) {
-      skipped++
-      const message = error instanceof Error ? error.message : String(error)
-      console.warn(`[skip] ${page.websiteUrl}: ${message}`)
-    }
-  }
-
-  await Promise.all(
-    Array.from(
-      { length: Math.min(CONCURRENCY, pages.length) },
-      () => worker()
-    )
+  console.log(`Checking ${pages.length} page URLs in batches of ${BATCH_SIZE}.`)
+  console.log(
+    DASHBOARD_ORIGIN
+      ? `Dashboard origin: ${DASHBOARD_ORIGIN}`
+      : 'Dashboard origin is not configured; checking only explicit frame blocks.'
   )
 
-  console.log(`Finished. Updated ${updated}; skipped ${skipped}.`)
-  return { found: pages.length, updated, skipped }
-}
+  const results: CheckResult[] = []
 
-async function fetchOpenGraphImage (websiteUrl: string) {
-  const response = await fetch(websiteUrl, {
-    redirect: 'follow',
-    headers: {
-      accept: 'text/html,application/xhtml+xml',
-      'user-agent': 'Xfolios cover backfill/1.0'
-    },
-    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS)
+  for (let index = 0; index < pages.length; index += BATCH_SIZE) {
+    const batch = pages.slice(index, index + BATCH_SIZE)
+    const batchResults = await Promise.all(batch.map(checkPage))
+
+    for (const result of batchResults) {
+      results.push(result)
+      console.log(
+        `${result.embeddable ? 'OK' : 'BLOCK'} ${result.websiteUrl} — ${result.reason}`
+      )
+    }
+  }
+
+  const embeddable = results.filter(result => result.embeddable)
+  const blocked = results.filter(result => !result.embeddable)
+
+  printList('Embeddable', embeddable)
+  printList('Blocked', blocked)
+
+  if (blocked.length === 0) {
+    console.log('No blocked pages to delete.')
+    return { checked: results.length, embeddable: embeddable.length, blocked: 0, deleted: 0 }
+  }
+
+  const blockedPageIds = blocked.map(result => result.id)
+  const affectedUserIds = [...new Set(blocked.map(result => result.userId))]
+  const deletion = await prisma.page.deleteMany({
+    where: { id: { in: blockedPageIds } }
   })
 
-  if (!response.ok) {
-    throw new Error(`Website returned HTTP ${response.status}`)
+  await Promise.all(
+    affectedUserIds.map(async userId => {
+      const totalPage = await prisma.page.count({ where: { userId } })
+      await prisma.user.update({
+        where: { id: userId },
+        data: { totalPage }
+      })
+    })
+  )
+
+  console.log(`Deleted ${deletion.count} blocked pages from the database.`)
+
+  return {
+    checked: results.length,
+    embeddable: embeddable.length,
+    blocked: blocked.length,
+    deleted: deletion.count
   }
-
-  const contentType = response.headers.get('content-type') ?? ''
-  if (!contentType.includes('text/html') && !contentType.includes('application/xhtml+xml')) {
-    throw new Error(`Expected HTML but received ${contentType || 'an unknown content type'}`)
-  }
-
-  const html = await response.text()
-  const image =
-    getMetaContent(html, 'og:image') ||
-    getMetaContent(html, 'og:image:url') ||
-    getMetaContent(html, 'og:image:secure_url') ||
-    getMetaContent(html, 'twitter:image') ||
-    getMetaContent(html, 'twitter:image:src')
-
-  return image ? toHttpUrl(image, response.url || websiteUrl) : null
 }
 
-function getMetaContent (html: string, property: string) {
-  const target = property.toLowerCase()
-  const tags = html.match(/<meta\b[^>]*>/gi) ?? []
+async function checkPage (page: PageRecord): Promise<CheckResult> {
+  try {
+    const response = await fetch(page.websiteUrl, {
+      redirect: 'follow',
+      headers: {
+        accept: 'text/html,application/xhtml+xml',
+        'user-agent': 'Mozilla/5.0 (compatible; XfoliosEmbedChecker/1.0)'
+      },
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS)
+    })
 
-  for (const tag of tags) {
-    const attributes = new Map<string, string>()
-    const attributePattern = /([\w:-]+)\s*=\s*(["'])(.*?)\2/g
-    let match: RegExpExecArray | null
-
-    while ((match = attributePattern.exec(tag))) {
-      attributes.set(match[1].toLowerCase(), decodeHtmlAttribute(match[3]))
+    if (!response.ok) {
+      await response.body?.cancel()
+      return blockedResult(page, `HTTP ${response.status}`)
     }
 
-    const key = (attributes.get('property') ?? attributes.get('name'))?.toLowerCase()
-    if (key === target) return attributes.get('content')?.trim() ?? ''
+    const xFrameOptions = response.headers.get('x-frame-options')
+    const xFrameBlock = getXFrameOptionsBlockReason(xFrameOptions)
+
+    if (xFrameBlock) {
+      await response.body?.cancel()
+      return blockedResult(page, xFrameBlock)
+    }
+
+    const contentSecurityPolicy = response.headers.get('content-security-policy')
+    const cspBlock = getCspBlockReason(contentSecurityPolicy, DASHBOARD_ORIGIN)
+    await response.body?.cancel()
+
+    if (cspBlock) {
+      return blockedResult(page, cspBlock)
+    }
+
+    return {
+      ...page,
+      embeddable: true,
+      reason: 'no blocking frame headers'
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return blockedResult(page, `request failed: ${message}`)
+  }
+}
+
+function getXFrameOptionsBlockReason (header: string | null) {
+  if (!header) return null
+
+  const blockingValue = header
+    .split(',')
+    .map(value => value.trim())
+    .find(value => /^(?:DENY|SAMEORIGIN)(?:\s|$)|^ALLOW-FROM(?:\s|$)/i.test(value))
+
+  return blockingValue
+    ? `X-Frame-Options: ${blockingValue}`
+    : null
+}
+
+function getCspBlockReason (
+  header: string | null,
+  dashboardOrigin: URL | null
+) {
+  if (!header) return null
+
+  const directives = [...header.matchAll(/(?:^|[;,])\s*frame-ancestors(?:\s+([^;,]*))?/gi)]
+  if (directives.length === 0) return null
+
+  for (const directive of directives) {
+    const value = directive[1]?.trim() ?? ''
+    const sources = value.split(/\s+/).filter(Boolean)
+    const normalizedSources = sources.map(source => source.toLowerCase())
+
+    if (sources.length === 0) {
+      return 'CSP frame-ancestors is empty'
+    }
+
+    if (normalizedSources.includes("'none'")) {
+      return "CSP frame-ancestors 'none'"
+    }
+
+    if (sources.length === 1 && normalizedSources[0] === "'self'") {
+      return "CSP frame-ancestors 'self'"
+    }
+
+    if (
+      dashboardOrigin &&
+      !sources.some(source => sourceAllowsOrigin(source, dashboardOrigin))
+    ) {
+      return `CSP frame-ancestors does not allow ${dashboardOrigin.origin}`
+    }
   }
 
-  return ''
+  return null
 }
 
-function decodeHtmlAttribute (value: string) {
-  return value
-    .replaceAll('&amp;', '&')
-    .replaceAll('&#38;', '&')
-    .replaceAll('&#x26;', '&')
-    .replaceAll('&quot;', '"')
-}
+function sourceAllowsOrigin (source: string, dashboardOrigin: URL) {
+  const normalized = source.trim().replace(/^['"]|['"]$/g, '').toLowerCase()
 
-function toHttpUrl (value: string, base: string) {
+  if (normalized === '*') return true
+  if (normalized === `${dashboardOrigin.protocol}`) return true
+
   try {
-    const url = new URL(value, base)
-    return url.protocol === 'http:' || url.protocol === 'https:'
-      ? url.toString()
-      : null
+    const sourceUrl = new URL(normalized)
+    if (sourceUrl.origin === dashboardOrigin.origin) return true
+
+    if (sourceUrl.hostname.startsWith('*.')) {
+      const baseDomain = sourceUrl.hostname.slice(2)
+      return (
+        sourceUrl.protocol === dashboardOrigin.protocol &&
+        dashboardOrigin.hostname.endsWith(`.${baseDomain}`)
+      )
+    }
   } catch {
-    return null
+    if (normalized === dashboardOrigin.hostname) return true
+
+    if (normalized.startsWith('*.')) {
+      return dashboardOrigin.hostname.endsWith(`.${normalized.slice(2)}`)
+    }
+  }
+
+  return false
+}
+
+function getDashboardOrigin () {
+  const configuredUrl =
+    process.env.DASHBOARD_URL ??
+    process.env.NEXT_PUBLIC_APP_URL ??
+    process.env.AUTH_URL ??
+    process.env.NEXTAUTH_URL
+
+  if (!configuredUrl) return null
+
+  try {
+    return new URL(configuredUrl)
+  } catch {
+    throw new Error(`Invalid dashboard URL: ${configuredUrl}`)
   }
 }
 
-backfillPageCoverUrls()
+function blockedResult (page: PageRecord, reason: string): CheckResult {
+  return { ...page, embeddable: false, reason }
+}
+
+function printList (title: string, results: CheckResult[]) {
+  console.log(`\n${title} (${results.length})`)
+
+  if (results.length === 0) {
+    console.log('  (none)')
+    return
+  }
+
+  for (const result of results) {
+    console.log(`  - ${result.websiteUrl}${result.embeddable ? '' : ` — ${result.reason}`}`)
+  }
+}
+
+removePagesBlockedFromIframes()
   .catch(error => {
-    console.error('Cover URL backfill failed:', error)
+    console.error('Iframe compatibility check failed:', error)
     process.exitCode = 1
   })
   .finally(async () => {
