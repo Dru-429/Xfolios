@@ -171,7 +171,10 @@ function PortfolioTileContent ({
 
 function PreviewFallback () {
   return (
-    <div className='absolute inset-x-[9%] top-[13%] bottom-[12%] overflow-hidden rounded-[4px] border border-foreground/15 bg-card/80 p-[7%] transition-transform duration-500 group-hover:scale-[1.025]'>
+    <div
+      aria-hidden='true'
+      className='absolute inset-x-[9%] top-[13%] bottom-[12%] overflow-hidden rounded-[4px] border border-foreground/15 bg-card/80 p-[7%] transition-transform duration-500 motion-safe:animate-pulse motion-reduce:animate-none group-hover:scale-[1.025]'
+    >
       <div className='mb-[10%] flex items-center justify-between'>
         <span className='h-1 w-[26%] rounded-full bg-foreground/60' />
         <span className='h-1 w-[14%] rounded-full bg-primary/70' />
