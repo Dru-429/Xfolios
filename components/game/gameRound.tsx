@@ -1,6 +1,6 @@
-import { ArrowLeft, ArrowRight } from 'lucide-react'
-import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 
+import BackNavigation from '@/components/ui/BackNavigation'
 import { Button } from '@/components/ui/button'
 import GameCards from './gameCards'
 import type { Bracket, GamePortfolio, RoundResult } from './gameTypes'
@@ -30,12 +30,7 @@ export default function GameRound ({
     <main className='relative w-full max-h-scree px-5 pb-1 pt-7 sm:pb-10 sm:px-8 sm:pt-4 lg:px-5'>
       <div className='flex w-full flex-col gap-3 border-b-2 border-muted pb-2'>
         <div className='relative flex items-center justify-between gap-4'>
-          <Link
-            href='/'
-            className='inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground'
-          >
-            <ArrowLeft className='h-4 w-4' aria-hidden='true' /> Exit game
-          </Link>
+          <BackNavigation />
           <div className='relative right-5 text-right'>
             <p className='font-display text-2xl font-medium'>{round}/5</p>
             <p className='font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground'>

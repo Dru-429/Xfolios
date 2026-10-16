@@ -2,7 +2,6 @@
 
 import { motion } from 'motion/react'
 import {
-  ArrowLeft,
   ArrowUpRight,
   Bookmark,
   ExternalLink,
@@ -13,6 +12,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+import BackNavigation from '@/components/ui/BackNavigation'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import EditPage from '@/components/ui/editPage'
@@ -82,15 +82,7 @@ export default function WebsitePage ({ page, viewer, isSaved = false, isOwner }:
   return (
     <div className='min-h-screen bg-background text-foreground'>
       <main className='mx-auto w-full min-h-screen h-full p-2 sm:p-5 '>
-        <Link
-          href='/'
-          className='mb-6 sm:md-3  inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground'
-        >
-          <div className=" inline-flex items-center gap-2 text-sm">
-            <ArrowLeft className='h-4 w-4' aria-hidden='true' />
-            All folios
-          </div>
-        </Link>
+        <BackNavigation className='mb-6 sm:mb-3' />
 
         <motion.section
           className='overflow-hidden rounded-xl sm:rounded-r-none border border-border bg-card'

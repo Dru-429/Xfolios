@@ -75,7 +75,9 @@ export default function PortfolioTile ({
           event.stopPropagation()
           if (!isAuthenticated) {
             const callbackUrl = `/page/${portfolio.pageId}`
-            router.push(`/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`)
+            router.push(
+              `/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`
+            )
             return
           }
           setIsUpdatingBookmark(true)
@@ -111,17 +113,17 @@ function PortfolioTileContent ({
   domain: string
 }) {
   const storedCoverUrl = portfolio['cover url']?.trim()
-  const coverUrl = storedCoverUrl
-    ? storedCoverUrl
-    : ''
-  const previewUrl = coverUrl || (portfolio.pageId
-    ? `/api/pages/${encodeURIComponent(portfolio.pageId)}/preview?v=3`
-    : '')
+  const coverUrl = storedCoverUrl ? storedCoverUrl : ''
+  const previewUrl =
+    coverUrl ||
+    (portfolio.pageId
+      ? `/api/pages/${encodeURIComponent(portfolio.pageId)}/preview?v=3`
+      : '')
 
   return (
     <>
       <div
-        className={`relative aspect-[1.48] overflow-hidden border-b border-border rounded-t-md `}
+        className={`relative aspect-[1.48] overflow-hidden border-b border-border rounded-t-md  `}
       >
         <Avatar className='h-full w-full rounded-none'>
           <AvatarImage
@@ -142,16 +144,25 @@ function PortfolioTileContent ({
       </div>
 
       <div className='flex min-w-0 items-center gap-3 p-3 sm:p-4'>
-        <Avatar className='h-9 w-9 shrink-0 rounded-md border border-border'>
-          <AvatarImage
-            src={portfolio['X image url']}
-            alt={`${name} on X`}
-            loading='lazy'
-          />
-          <AvatarFallback className='rounded-md bg-accent text-xs text-accent-foreground'>
-            {initials}
-          </AvatarFallback>
-        </Avatar>
+        <motion.div
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{
+            duration: 0.5,
+            ease: "easeIn",
+          }}
+        >
+          <Avatar className='h-9 w-9 shrink-0 rounded-md border border-border'>
+            <AvatarImage
+              src={portfolio['X image url']}
+              alt={`${name} on X`}
+              loading='lazy'
+            />
+            <AvatarFallback className='rounded-md bg-accent text-xs text-accent-foreground'>
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+        </motion.div>
         <div className='min-w-0 flex-1'>
           <p className='truncate text-sm font-medium text-card-foreground'>
             {name}

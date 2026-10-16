@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import {
-  ArrowLeft,
   ArrowRight,
   LayoutGrid,
   List,
@@ -11,6 +10,7 @@ import {
 import { motion } from 'motion/react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import PortfolioTile from '@/components/ui/pageTile'
+import BackNavigation from '@/components/ui/BackNavigation'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -39,15 +39,7 @@ export default function GameResults ({
 
   return (
     <main className='mx-auto min-h-[105vh] w-full max-w-375 px-4 py-8 sm:px-8 sm:py-12 lg:px-12'>
-      <Link
-        href='/'
-        className='mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground'
-      >
-        <div className=' inline-flex items-center gap-2 text-sm'>
-          <ArrowLeft className='h-4 w-4' aria-hidden='true' />
-          All folios
-        </div>
-      </Link>
+      <BackNavigation className='mb-6' />
       <motion.section
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}

@@ -1,11 +1,11 @@
 'use client'
 
 import { AnimatePresence, motion } from 'motion/react'
-import { ArrowLeft, Bookmark, Grid3X3 } from 'lucide-react'
-import Link from 'next/link'
+import { Bookmark, Grid3X3 } from 'lucide-react'
 import { useState } from 'react'
 
 import Footer from '@/components/ui/footer'
+import BackNavigation from '@/components/ui/BackNavigation'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Navbar } from '@/components/ui/Navbar'
@@ -106,13 +106,7 @@ export default function ProfilePage ({
       <Navbar user={viewer} />
 
       <main className='mx-auto w-full min-h-screen max-w-6xl px-5 pb-20 pt-8 sm:px-8 sm:pt-12'>
-        <Link
-          href='/'
-          className='mb-4 sm:mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground'
-        >
-          <ArrowLeft className='h-4 w-4' aria-hidden='true' />
-          All folios
-        </Link> 
+        <BackNavigation className='mb-4 sm:mb-8' />
 
         <motion.section
           className='grid grid-cols-[88px_minmax(0,1fr)] gap-6 pb-5 sm:pb-10 sm:grid-cols-[160px_minmax(0,1fr)] sm:gap-12 sm:px-8'
