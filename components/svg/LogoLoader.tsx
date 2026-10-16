@@ -1,10 +1,7 @@
 import type { SVGProps } from 'react'
 
 const css = `
-.xf-fg { stroke: #0a0a0a; }
-@media (prefers-color-scheme: dark) { .xf-fg { stroke: #fafafa; } }
-.dark .xf-fg { stroke: #fafafa; }
-.light .xf-fg { stroke: #0a0a0a; }
+.xf-fg { stroke: currentColor; }
 
 .xf-draw {
   stroke-dasharray: 1;
