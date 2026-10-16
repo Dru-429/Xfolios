@@ -77,7 +77,7 @@ const hidden = (x: number, y: number) =>
 const DRAWER_T = [0, 0.1, 0.2, 0.82, 0.92, 1]
 
 const FILES = [
-  [149, 82, 34],
+  [149, 82, 34],FOUND
   [158, 80, 36],
   [167, 78, 38],
   [176, 80, 36],
@@ -117,11 +117,9 @@ export function Search ({ className = '', ...props }: SVGProps<SVGSVGElement>) {
               COLS.map(x => {
                 if (x === 164 && y === 86) return null
                 return (
-                  <motion.g
-                    key={`${x}-${y}`}
-                  >
+                  <g key={`${x}-${y}`}>
                     <Cell x={x} y={y} />
-                  </motion.g>
+                  </g>
                 )
               })
             )}
@@ -135,19 +133,17 @@ export function Search ({ className = '', ...props }: SVGProps<SVGSVGElement>) {
             })}
           >
             <motion.g 
-                          {...kf([0, 0.13, 0.19, 0.84, 0.94, 1], {
-                opacity: [0, 0, 1, 1, 0, 0]
-              })}
-              >
+              {...kf([0, 0.13, 0.19, 0.84, 0.94, 1], {
+                opacity: [1, 0.3, 0.1, 0.1, 1, 1]
+              })}            >
               <Cell x={164} y={86} />
             </motion.g>
 
             <motion.g
-              {...kf([0, 0.10, 0.19, 0.84, 0.94, 1], {
-                opacity: [0, 1, 1, 1, 0, 0]
+              {...kf([0, 0.13, 0.19, 0.84, 0.94, 1], {
+                opacity: [0, 0, 1, 1, 0, 0]
               })}
             >
-              <path d='M164 86L148 112H221L230 86' />
               <path d='M148 112L151 131H225L221 112' opacity='.75' />
 
               {FILES.map(([x, y, h], i) =>
@@ -155,7 +151,7 @@ export function Search ({ className = '', ...props }: SVGProps<SVGSVGElement>) {
                   <motion.g
                     key={i}
                     {...kf(
-                      [0, 0.63, 0.7, 0.78, 0.84, 0.9, 1],
+                      [0, 0.63, 0.7, 0.78, 0.84, 0.96, 1],
                       {
                         x: [0, 0, -3, -1, 0, 0, 0],
                         y: [0, 0, -31, -34, -4, 0, 0],
