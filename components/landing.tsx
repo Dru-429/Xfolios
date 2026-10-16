@@ -23,6 +23,7 @@ import { Navbar } from './ui/Navbar'
 import Hero from './ui/Hero'
 import PortfolioTile, { type PortfolioTileData } from './ui/pageTile'
 import Footer from './ui/footer'
+import SearchLoader from './svg/Search';
 
 type LandingUser = {
   name?: string | null
@@ -274,7 +275,8 @@ export default function Landing ({
           </AnimatePresence>
         ) : (
           <div className='rounded-lg border border-dashed border-border py-20 text-center'>
-            <p className='text-sm font-medium'>No portfolios found.</p>
+            <SearchLoader className='mx-auto h-72 w-72 text-foreground' />
+            <p className='text-sm font-medium'>No pages found.</p>
             <p className='mt-1 text-xs text-muted-foreground'>
               Try a different name, handle, or website.
             </p>
