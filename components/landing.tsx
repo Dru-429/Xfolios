@@ -275,9 +275,9 @@ export default function Landing ({
           </AnimatePresence>
         ) : (
           <div className='rounded-lg border border-dashed border-border py-20 text-center'>
-            <SearchLoader className='mx-auto h-72 w-72 text-foreground' />
-            <p className='text-sm font-medium'>No pages found.</p>
-            <p className='mt-1 text-xs text-muted-foreground'>
+            <SearchLoader className='mx-auto h-72 w-72 text-foreground mb-2' />
+            <p className='text-md font-medium -mt-7'>No pages found.</p>
+            <p className='mt-1 text-sm text-muted-foreground'>
               Try a different name, handle, or website.
             </p>
           </div>

@@ -77,7 +77,7 @@ const hidden = (x: number, y: number) =>
 const DRAWER_T = [0, 0.1, 0.2, 0.82, 0.92, 1]
 
 const FILES = [
-  [149, 82, 34],FOUND
+  [149, 82, 34],
   [158, 80, 36],
   [167, 78, 38],
   [176, 80, 36],
